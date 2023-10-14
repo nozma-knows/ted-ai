@@ -11,7 +11,7 @@ headers = {
 }
 
 
-index_id = "652793eb23c1347ffbe3a398"
+index_id = "652aedb33c4a426cf3f4f518"
 
 url = f'https://api.twelvelabs.io/v1.1/indexes/{index_id}/videos?page=1&page_limit=10&sort_by=created_at&sort_option=desc'
 
