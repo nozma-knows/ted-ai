@@ -11,8 +11,8 @@ headers = {
     "Content-Type": "application/json"
 }
 
-index_id = "6527128823c1347ffbe3a2b7"
-video_id = "65271b4c43e8c47e4eb47cc5"
+index_id = "652793eb23c1347ffbe3a398"
+video_id = "6527d45f43e8c47e4eb47dee"
 
 url = f"https://api.twelvelabs.io/v1.1/indexes/{index_id}/videos/{video_id}/transcription"
 

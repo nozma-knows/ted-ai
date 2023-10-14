@@ -2,7 +2,7 @@ import requests
 from dotenv import load_dotenv
 load_dotenv()
 import os
-API_KEY='tlk_2A5WBRE14TGGV921MJSR40MNXM7J'
+API_KEY='tlk_25RFF6T069MJFF286MZEM3GC5KRY'
 
 headers = {
     "accept": "application/json",
@@ -11,7 +11,7 @@ headers = {
 }
 
 
-index_id = "6527128823c1347ffbe3a2b7"
+index_id = "652793eb23c1347ffbe3a398"
 
 url = f'https://api.twelvelabs.io/v1.1/indexes/{index_id}/videos?page=1&page_limit=10&sort_by=created_at&sort_option=desc'
 
