@@ -54,18 +54,15 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     const narration: Narration = data.response;
   
     // If the narration's name is "Narrator", return the narration data
-    if (narration.name === "Narrator") {
       if (!scene.imageUrl) {
         throw new Error("Scene image is not defined");
       }
       return {
         imageUrl: scene.imageUrl,
-        characterName: narration.name,
+        characterName: "Narrator",
         text: narration.text,
       };
-    }
   
-    throw new Error("Narration name is not 'Narrator'");
   };
 
 // Fetch initial narration and image when component mounts
