@@ -1,15 +1,17 @@
 import Layout from "@/components/Layout";
-import CharacterSelector, {
-  CharacterProps,
-} from "@/components/ui/CharacterSelector";
-import VideoSelector, { Video } from "@/components/ui/VideoSelector";
+
+import VideoSelector from "@/components/ui/VideoSelector";
 import Story from "@/components/ui/Story";
 import { Flex, Stack, Heading, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { CharacterProps, Video } from "@/types";
+import CharacterSelector from "@/components/ui/CharacterSelector";
 
 export default function Home() {
-  const [scene, setScene] = useState<Video | null>(null);
+  const [video, setVideo] = useState<Video | null>(null);
   const [character, setCharacter] = useState<CharacterProps | null>(null);
+  
+
 
   return (
     <Layout>
@@ -17,16 +19,16 @@ export default function Home() {
         <Heading>Anime Anything</Heading>
         <Flex w="full" h="full" justifyContent="center">
           {/* Display Scene Selector */}
-          {!scene && (
+          {!video && (
             <Stack w="full" maxW="600">
               <Text fontWeight="bold" fontSize="2xl">
                 Select a scene
               </Text>
-              <VideoSelector setVideo={setScene} />
+              <VideoSelector setVideo={setVideo} />
             </Stack>
           )}
           {/* Display Character Selector */}
-          {scene && !character && (
+          {video && !character && (
             <Stack w="full" maxW="600">
               <Text fontWeight="bold" fontSize="2xl">
                 Select a character
@@ -35,7 +37,7 @@ export default function Home() {
             </Stack>
           )}
           {/* Diplay Story */}
-          {scene && character && <Story scene={scene} character={character} />}
+          {video && character && <Story scene={video} character={character} />}
         </Flex>
       </Stack>
     </Layout>
