@@ -54,11 +54,11 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     const narration: Narration = data.response;
   
     // If the narration's name is "Narrator", return the narration data
-      if (!scene.imageUrl) {
+      if (!scene.imageUrls) {
         throw new Error("Scene image is not defined");
       }
       return {
-        imageUrl: scene.imageUrl,
+        imageUrl: scene.imageUrls[0],
         characterName: "Narrator",
         text: narration.text,
       };

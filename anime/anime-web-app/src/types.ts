@@ -22,7 +22,8 @@ export interface Scene {
   music: string;
   plot: string;
   characters: Character[];
-  imageUrl?: string;
+  imageUrls?: string[];
+  prompts: string[]; // Add this line
 }
 
 export interface Video {

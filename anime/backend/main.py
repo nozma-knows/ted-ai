@@ -171,7 +171,7 @@ class VideoInput(BaseModel):
 async def generate_scene(video_input: VideoInput):
     # Call the vid2scene method with the video_id from the request body
     global scene
-    scene = vid2scene(video_input.video_id)
+    scene = await vid2scene(video_input.video_id)
 
     # Return the Scene object
     return {"response": scene}

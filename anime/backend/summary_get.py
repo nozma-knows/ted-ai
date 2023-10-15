@@ -1,6 +1,6 @@
 import json
 import requests
-from marvin import ai_fn, ai_model, ChatCompletion, settings
+from marvin import ai_fn, ai_model, ChatCompletion, settings, openai
 from pydantic import BaseModel, Field
 from typing import Dict, List
 
@@ -47,11 +47,46 @@ class Scene(BaseModel):
     characters: List[Character] = Field(
         description="An imaginative description of characters that could be in the scene. We will be generating an imaginary anime using these characters, that will be an interactive story. Please make sure that there are suitable characters for such an imaginary story. Inventing characters that make sense in the scene is OK. Please make sure that the characters are represented by humans or humanoids and avoid anthropomorphized animals or objects."
     )
+    prompts: List[str] = None
 
 
-def vid2scene(video_id: str) -> List[Scene]:
+class ScenePromptList(BaseModel):
+    scene_prompts: List[str] = Field(
+        description="A list of the prompts for the scenes."
+    )
+
+
+async def generate_scene_prompts(scene: Scene):
+    # Define the initial message
+    initial_message = {
+        "role": "system",
+        "content": f"""
+        plot: {scene.plot}
+
+extract key scenes we can use to generate images to convey the overall plot
+
+describe each scene concisely in 1-2 sentences using active voice and descriptive language to generate an image accurately with stable diffusion""",
+    }
+
+    # Initialize the messages list
+    messages = [initial_message]
+
+    # Generate a new character
+    response = openai.ChatCompletion().create(
+        messages=messages, response_model=ScenePromptList
+    )
+    model = response.to_model()
+
+    return model.scene_prompts
+
+
+async def vid2scene(video_id: str) -> Scene:
     desc_from_twelve_labs = generate_scene(video_id)
-    return Scene(str(desc_from_twelve_labs))
+    s = Scene(str(desc_from_twelve_labs))
+
+    s.prompts = await generate_scene_prompts(s)
+
+    return s
 
 
 space_x = "652b5c1b43e8c47e4eb4829b"

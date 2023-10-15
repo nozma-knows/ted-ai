@@ -35,23 +35,23 @@ export default function Home() {
     };
   
     // Function to generate image for a scene
-    const generateSceneImage = async (scene: Scene) => {
-      const charString = JSON.stringify(scene.characters);
-      const response = await fetch('/api/leap/generate-scene-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        
-        body: JSON.stringify({scene: {
-          ...scene, characters: charString
-        }}),
-      });
-  
-      const data = await response.json();
-      console.log("sceneImage", data);
-      return data.imageUrl;
-    };
+    // Function to generate image for a scene
+const generateSceneImages = async (scene: Scene) => {
+  const charString = JSON.stringify(scene.characters);
+  const imagePromises = scene.prompts.map(prompt =>
+    fetch('/api/leap/generate-scene-image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt  }),
+    }).then(response => response.json()).then(data => data.imageUrl)
+  );
+
+  const imageUrls = await Promise.all(imagePromises);
+  console.log("sceneImages", imageUrls);
+  return imageUrls;
+};
   
     // Check if scene is not null
     if (scene) {
@@ -67,21 +67,21 @@ export default function Home() {
       });
   
       // Generate image for the scene if it doesn't have an imageUrl
-      const sceneImagePromise = updatedScene.imageUrl ? Promise.resolve(updatedScene.imageUrl) : generateSceneImage(updatedScene);
+      const sceneImagePromise = updatedScene.imageUrls && updatedScene.imageUrls.length > 0 ? Promise.resolve(updatedScene.imageUrls) : generateSceneImages(updatedScene);
   
       Promise.all([...characterImagePromises, sceneImagePromise])
-        .then(results => {
-          const characters = results.slice(0, -1);
-          const sceneImageUrl = results[results.length - 1];
-  
-          updatedScene.characters = characters;
-          updatedScene.imageUrl = sceneImageUrl;
-  
-          // Only update the finalScene state if it has changed
-          if (JSON.stringify(generatingScene) !== JSON.stringify(updatedScene)) {
-            setGeneratingScene(updatedScene);
-          }
-        });
+    .then(results => {
+      const characters = results.slice(0, -1).flat();
+      const sceneImageUrls = results[results.length - 1];
+
+      updatedScene.characters = characters;
+      updatedScene.imageUrls = sceneImageUrls as string[]; // Update imageUrls instead of imageUrl
+
+      // Only update the finalScene state if it has changed
+      if (JSON.stringify(generatingScene) !== JSON.stringify(updatedScene)) {
+        setGeneratingScene(updatedScene);
+      }
+    });
     }
   }, [scene]); // Depend on scene state
 
