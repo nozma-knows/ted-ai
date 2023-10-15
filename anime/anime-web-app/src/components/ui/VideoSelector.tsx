@@ -1,6 +1,6 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
-import { Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+import { Flex, Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
 
 import { motion } from "framer-motion";
 import { VideoProps, Video, Scene } from "@/types";
@@ -27,9 +27,10 @@ const videos = [
   },
 ];
 
-const Video = ({ video, setVideo, setScene }: VideoProps) => {
+const Video = ({ video, setVideo, setScene, setLoading }: VideoProps) => {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const videoClicked = async (video: Video) => {
+    setLoading(true);
     console.log(video);
     console.log(backendUrl);
     // const response = await fetch(`${backendUrl}/generate_scene/`, {
@@ -97,6 +98,7 @@ const Video = ({ video, setVideo, setScene }: VideoProps) => {
     // Update the video in the parent component
     setVideo(video);
     setScene(data.response);
+    setLoading(false);
   };
 
   return (
@@ -121,6 +123,20 @@ interface Props {
 }
 
 const VideoSelector: FC<Props> = ({ setVideo, setScene }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+
+  if (loading) {
+    return (
+      <Flex
+        w="full"
+        aspectRatio={16 / 9}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <Spinner />
+      </Flex>
+    );
+  }
   return (
     <Flex w="full" justifyContent="center">
       <MotionGrid
@@ -139,6 +155,7 @@ const VideoSelector: FC<Props> = ({ setVideo, setScene }) => {
               video={video}
               setVideo={setVideo}
               setScene={setScene}
+              setLoading={setLoading}
             />
           );
         })}

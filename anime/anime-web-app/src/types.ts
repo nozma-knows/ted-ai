@@ -34,7 +34,8 @@ export interface Video {
 export interface VideoProps {
   video: Video;
   setVideo: (video: Video) => void;
-  setScene  : (scene: Scene) => void;
+  setScene: (scene: Scene) => void;
+  setLoading: (loading: boolean) => void;
 }
 
 export interface Panel {
