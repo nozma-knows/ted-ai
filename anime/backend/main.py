@@ -29,7 +29,7 @@ def narration_to_string(narration: Narration) -> str:
     if narration is None:
         return ""
 
-    return f"The current goal of the scene is to {(last_narration.text)}. The characters conversation will guide them to {last_narration.text}."
+    return f"The current goal of the scene is to {narration.text}. The characters conversation will guide them to {narration.text}."
 
 
 # Initialize the chat history
