@@ -1,4 +1,4 @@
-import { Character } from "@/types";
+import { Character, Scene } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
 import {OpenAI} from "openai";
 
@@ -21,28 +21,26 @@ export default async function handler(
 
  
 
-  const getLeapPrompt = async (character: Character) => {
+  const getLeapPrompt = async (scene: Scene) => {
     const res = await openai.chat.completions.create({
       messages: [
-        {role: 'system', content: `you are a prompt generation expert tasked with helping me take descriptions of characters and turn them into prompts for stable diffusion to generate engaging avatars
-        help me generate a killer prompt I can use to consistently create any kind of characterI want based on a name, description, imagery, and personality w/ stable diffusion
-        every character you generate needs to feel like they belong in the same world
-        {subject} Luminous neon colors, cyberpunk aesthetic, crisp 8K clarity, contemporary anime influence, Studio Ghibli-inspired, emphasize intricate fractals, impactful.
-        we will only be modifying the {subject} using the data we provide you while using the rest of the prompt to maintain style w/ the rest of the world we are building
-        generate the {subject} and integrate it into the main prompt structure
-        return only the final output
+        {role: 'system', content: `plot: {plot example}
+
+        extract key scenes we can use to generate images to convey the overall plot
+        
+        describe each scene concisely in 1-2 sentences using active voice and descriptive language to generate an image accurately with stable diffusion
         `},
         { role: 'user', content: `User Data:
-        name: ${character.name}
-        description: ${character.description}
-        imagery: ${character.imagery}
-        personality: ${character.personality}`}
+        name: ${scene.name}
+        description: ${scene.plot}
+        imagery: ${scene.imagery}
+        personality: ${scene.characters}`}
       ],
        model: 'gpt-4',
       }
     );
     return res.choices[0].message.content}
-  const prompt = await getLeapPrompt(body.character);
+  const prompt = await getLeapPrompt(body.scene);
 
 
     const options = {
@@ -65,10 +63,10 @@ export default async function handler(
     };  
 
   try {
-    console.log("generate-character-image.ts - url: ", url);
+    console.log("generate-scene-image.ts - url: ", url);
     const response = await fetch(url, options);
     const data = await response.json();
-    console.log("generate-character-image.ts - data: ", data);
+    console.log("generate-scene-image.ts - data: ", data);
     const { modelId, id: inferenceId } = data;
 
     // Define the polling URL
@@ -87,7 +85,7 @@ export default async function handler(
     let imageResponse;
     do {
       imageResponse = await fetch(pollingUrl, pollingOptions);
-      console.log("generate-character-image.ts - polling leap api: ");
+      console.log("generate-scene-image.ts - polling leap api: ");
       const imageData = await imageResponse.json();
 
       // If the image is generated, break the loop

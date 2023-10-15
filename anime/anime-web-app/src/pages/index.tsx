@@ -13,52 +13,75 @@ export default function Home() {
   const [scene, setScene] = useState<Scene | null>(null);
   const [finalScene, setFinalScene] = useState<Scene | null>(null);
 
-  // Inside your component
   useEffect(() => {
     // Function to generate image for a character
-    const generateImage = async (character: Character) => {
+    const generateCharacterImage = async (character: Character) => {
       const response = await fetch('/api/leap/generate-character-image', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-             character, // Assuming the character's name is used as the prompt
-          }),
-        });
-    
-        const data = await response.json();
-    
-        console.log(data);
-        // Assuming the image URL is returned in the `data.imageUrl` field
-        return data.imageUrl;
-      };
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          character, // Assuming the character's name is used as the prompt
+        }),
+      });
   
-      console.log("SCENE:", scene);
+      const data = await response.json();
+      console.log("characterImage", data);
+
+      return data.imageUrl;
+    };
   
-      // Check if scene is not null and if any character doesn't have an imageUrl
-      if (scene && scene.characters.some(character => !character.imageUrl)) {
-        // Create a copy of the scene
-        const updatedScene = { ...scene };
+    // Function to generate image for a scene
+    const generateSceneImage = async (scene: Scene) => {
+      const charString = JSON.stringify(scene.characters);
+      const response = await fetch('/api/leap/generate-scene-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        
+        body: JSON.stringify({scene: {
+          ...scene, characters: charString
+        }}),
+      });
   
-        // Generate image for each character without an imageUrl
-        Promise.all(
-          updatedScene.characters.map(async character => {
-            if (!character.imageUrl) {
-              character.imageUrl = await generateImage(character);
-            }
-            return character;
-          })
-        ).then(characters => {
+      const data = await response.json();
+      console.log("sceneImage", data);
+      return data.imageUrl;
+    };
+  
+    // Check if scene is not null
+    if (scene) {
+      // Create a copy of the scene
+      const updatedScene = { ...scene };
+  
+      // Generate image for each character without an imageUrl
+      const characterImagePromises = updatedScene.characters.map(async character => {
+        if (!character.imageUrl) {
+          character.imageUrl = await generateCharacterImage(character);
+        }
+        return character;
+      });
+  
+      // Generate image for the scene if it doesn't have an imageUrl
+      const sceneImagePromise = updatedScene.imageUrl ? Promise.resolve(updatedScene.imageUrl) : generateSceneImage(updatedScene);
+  
+      Promise.all([...characterImagePromises, sceneImagePromise])
+        .then(results => {
+          const characters = results.slice(0, -1);
+          const sceneImageUrl = results[results.length - 1];
+  
           updatedScene.characters = characters;
-      
+          updatedScene.imageUrl = sceneImageUrl;
+  
           // Only update the finalScene state if it has changed
           if (JSON.stringify(finalScene) !== JSON.stringify(updatedScene)) {
             setFinalScene(updatedScene);
           }
         });
-      }
-    }, [scene]); // Depend on scene state
+    }
+  }, [scene]); // Depend on scene state
 
   return (
     <Layout>
