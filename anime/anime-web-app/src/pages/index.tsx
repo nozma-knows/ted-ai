@@ -1,15 +1,15 @@
 import Layout from "@/components/Layout";
 import CharacterSelector, {
-  Character,
+  CharacterProps,
 } from "@/components/ui/CharacterSelector";
-import SceneSelector, { Video } from "@/components/ui/SceneSelector";
+import VideoSelector, { Video } from "@/components/ui/VideoSelector";
 import Story from "@/components/ui/Story";
 import { Flex, Stack, Heading, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [scene, setScene] = useState<Video | null>(null);
-  const [character, setCharacter] = useState<Character | null>(null);
+  const [character, setCharacter] = useState<CharacterProps | null>(null);
 
   return (
     <Layout>
@@ -22,7 +22,7 @@ export default function Home() {
               <Text fontWeight="bold" fontSize="2xl">
                 Select a scene
               </Text>
-              <SceneSelector setScene={setScene} />
+              <VideoSelector setVideo={setScene} />
             </Stack>
           )}
           {/* Display Character Selector */}

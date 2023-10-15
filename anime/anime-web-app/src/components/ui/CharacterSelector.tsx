@@ -7,18 +7,15 @@ import {
   Textarea,
   Button,
 } from "@chakra-ui/react";
+import { CharacterProps } from "@/types";
 
-export interface Character {
-  name: string;
-  description: string;
-}
 
 interface Props {
-  setCharacter: (character: Character) => void;
+  setCharacter: (character: CharacterProps) => void;
 }
 
 const CharacterSelector: FC<Props> = ({ setCharacter }) => {
-  const [formData, setFormData] = useState<Character>({
+  const [formData, setFormData] = useState<CharacterProps>({
     name: "",
     description: "",
   });

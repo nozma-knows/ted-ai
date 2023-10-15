@@ -3,16 +3,8 @@ import { FC } from "react";
 import { Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 
 import { motion } from "framer-motion";
+import { VideoProps, Video } from "@/types";
 
-export interface Video {
-  title: string;
-  videoId?: string;
-}
-
-interface VideoProps {
-  video: Video;
-  setVideo: (video: Video) => void;
-}
 
 const videos = [
   {
@@ -34,8 +26,8 @@ const videos = [
 
 const Video = ({ video, setVideo }: VideoProps) => {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
-  const sceneClicked = async (scene: Video) => {
-    console.log(scene);
+  const videoClicked = async (video: Video) => {
+    console.log(video);
     console.log(backendUrl)
     const response = await fetch(`${backendUrl}/generate_scene/`, {
       method: 'POST',
@@ -43,7 +35,7 @@ const Video = ({ video, setVideo }: VideoProps) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        video_id: scene.videoId,
+        video_id: video.videoId,
       }),
     });
 
@@ -51,8 +43,8 @@ const Video = ({ video, setVideo }: VideoProps) => {
 
     console.log(data)
 
-    // Update the scene in the parent component
-    setVideo(scene);
+    // Update the video in the parent component
+    setVideo(video);
   }
 
 
@@ -65,7 +57,7 @@ const Video = ({ video, setVideo }: VideoProps) => {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       cursor="pointer"
-      onClick={() => sceneClicked(video)}
+      onClick={() => videoClicked(video)}
     >
       <Text>{video.title}</Text>
     </GridItem>
@@ -73,19 +65,19 @@ const Video = ({ video, setVideo }: VideoProps) => {
 };
 
 interface Props {
-  setScene: (scene: Video) => void;
+  setVideo: (video: Video) => void;
 }
 
-const SceneSelector: FC<Props> = ({ setScene }) => {
+const VideoSelector: FC<Props> = ({ setVideo }) => {
   return (
     <Flex w="full" justifyContent="center">
       <Grid templateColumns={["repeat(2, 1fr)"]} w="full" maxW={"600"} gap={4}>
-        {videos.map((scene) => {
-          return <Video key={scene.title} video={scene} setVideo={setScene} />;
+        {videos.map((video) => {
+          return <Video key={video.title} video={video} setVideo={setVideo} />;
         })}
       </Grid>
     </Flex>
   );
 };
 
-export default SceneSelector;
+export default VideoSelector;

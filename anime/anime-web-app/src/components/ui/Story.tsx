@@ -1,16 +1,12 @@
 import { FC, FormEvent, useEffect, useState } from "react";
 import { Stack, Flex, Input, Button } from "@chakra-ui/react";
-import { Video } from "./SceneSelector";
-import { Character } from "./CharacterSelector";
 import { useMusicContext } from "@/context/MusicContext";
 import BackgroundMusic from "../BackgroundMusic";
+import { StoryProps } from "@/types";
 
-interface Props {
-  scene: Video;
-  character: Character;
-}
 
-const Story: FC<Props> = ({ scene, character }) => {
+
+const Story: FC<StoryProps> = ({ scene, character }) => {
   const [prompt, setPrompt] = useState<string>("");
   const [showInput, setShowInput] = useState<boolean>(false);
 
