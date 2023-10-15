@@ -36,7 +36,7 @@ export default function Home() {
           )}
           {/* Diplay Story */}
           {scene && character && (
-            <Story scene={scene} character={character} showInput={false} />
+            <Story scene={scene} character={character} showInput />
           )}
         </Flex>
       </Stack>
