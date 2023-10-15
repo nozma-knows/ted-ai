@@ -50,10 +50,8 @@ class Scene(BaseModel):
     prompts: List[str] = []
 
 
-class ScenePromptList(BaseModel):
-    scene_prompts: List[str] = Field(
-        description="A list of the prompts for the scenes."
-    )
+class ScenePrompt(BaseModel):
+    text: str = Field(description="the prompt for the scenes.")
 
 
 async def generate_scene_prompts(scene: Scene):
@@ -63,7 +61,7 @@ async def generate_scene_prompts(scene: Scene):
         "content": f"""
         plot: {scene.plot}
 
-extract key scenes we can use to generate images to convey the overall plot
+Create the initial scene for the prompt, so that we can set the tone for the rest of the story. The scene should be a visual description of the start of the story
 
 describe each scene concisely in 1-2 sentences using active voice and descriptive language to generate an image accurately with stable diffusion""",
     }
@@ -73,11 +71,11 @@ describe each scene concisely in 1-2 sentences using active voice and descriptiv
 
     # Generate a new character
     response = openai.ChatCompletion().create(
-        messages=messages, response_model=ScenePromptList
+        messages=messages, response_model=ScenePrompt
     )
     model = response.to_model()
 
-    return model.scene_prompts
+    return [model.text]
 
 
 async def vid2scene(video_id: str) -> Scene:
