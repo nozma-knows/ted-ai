@@ -18,6 +18,7 @@ export default function Home() {
       <Stack>
         <Heading>Anime Anything</Heading>
         <Flex w="full" justifyContent="center">
+          {/* Display Scene Selector */}
           {!scene && (
             <Stack w="full" maxW="600">
               <Text fontWeight="bold" fontSize="2xl">
@@ -26,6 +27,7 @@ export default function Home() {
               <SceneSelector setScene={setScene} />
             </Stack>
           )}
+          {/* Display Character Selector */}
           {scene && !character && (
             <Stack w="full" maxW="600">
               <Text fontWeight="bold" fontSize="2xl">
@@ -34,6 +36,7 @@ export default function Home() {
               <CharacterSelector setCharacter={setCharacter} />
             </Stack>
           )}
+          {/* Diplay Story */}
           {scene && character && (
             <Stack>
               <Text>{`Selected schene: ${scene.title}`}</Text>
