@@ -3,7 +3,7 @@ import { FC } from "react";
 import { Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 
 import { motion } from "framer-motion";
-import { VideoProps, Video } from "@/types";
+import { VideoProps, Video, Scene } from "@/types";
 
 
 const videos = [
@@ -24,7 +24,7 @@ const videos = [
 
 
 
-const Video = ({ video, setVideo }: VideoProps) => {
+const Video = ({ video, setVideo, setScene }: VideoProps) => {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
   const videoClicked = async (video: Video) => {
     console.log(video);
@@ -66,14 +66,15 @@ const Video = ({ video, setVideo }: VideoProps) => {
 
 interface Props {
   setVideo: (video: Video) => void;
+  setScene: (scene: Scene) => void;
 }
 
-const VideoSelector: FC<Props> = ({ setVideo }) => {
+const VideoSelector: FC<Props> = ({ setVideo, setScene }) => {
   return (
     <Flex w="full" justifyContent="center">
       <Grid templateColumns={["repeat(2, 1fr)"]} w="full" maxW={"600"} gap={4}>
         {videos.map((video) => {
-          return <Video key={video.title} video={video} setVideo={setVideo} />;
+          return <Video key={video.title} video={video} setVideo={setVideo} setScene={setScene}/>;
         })}
       </Grid>
     </Flex>

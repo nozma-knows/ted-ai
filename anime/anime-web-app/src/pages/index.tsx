@@ -4,13 +4,13 @@ import VideoSelector from "@/components/ui/VideoSelector";
 import Story from "@/components/ui/Story";
 import { Flex, Stack, Heading, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { CharacterProps, Video } from "@/types";
+import { CharacterProps, Scene, Video } from "@/types";
 import CharacterSelector from "@/components/ui/CharacterSelector";
 
 export default function Home() {
   const [video, setVideo] = useState<Video | null>(null);
   const [character, setCharacter] = useState<CharacterProps | null>(null);
-  const [story, setStory] = useState<string | null>(null);
+  const [scene, setScene] = useState<Scene | null>(null);
 
 
   return (
@@ -24,7 +24,7 @@ export default function Home() {
               <Text fontWeight="bold" fontSize="2xl">
                 Select a scene
               </Text>
-              <VideoSelector setVideo={setVideo} />
+              <VideoSelector setVideo={setVideo} setScene={setScene}/>
             </Stack>
           )}
           {/* Display Character Selector */}
@@ -37,7 +37,7 @@ export default function Home() {
             </Stack>
           )}
           {/* Diplay Story */}
-          {video && character && <Story video={video} character={character} />}
+          {video && character && <Story video={video} character={character} scene={scene} />}
         </Flex>
       </Stack>
     </Layout>

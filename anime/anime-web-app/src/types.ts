@@ -13,6 +13,7 @@ export interface Character {
 export interface StoryProps {
   video: Video;
   character: CharacterProps;
+  scene: Scene | null;
 }
 
 export interface Scene {
@@ -31,4 +32,5 @@ export interface Video {
 export interface VideoProps {
   video: Video;
   setVideo: (video: Video) => void;
+  setScene  : (scene: Scene) => void;
 }
