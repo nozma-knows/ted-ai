@@ -10,7 +10,7 @@ import CharacterSelector from "@/components/ui/CharacterSelector";
 export default function Home() {
   const [video, setVideo] = useState<Video | null>(null);
   const [character, setCharacter] = useState<CharacterProps | null>(null);
-  
+  const [story, setStory] = useState<string | null>(null);
 
 
   return (
@@ -37,7 +37,7 @@ export default function Home() {
             </Stack>
           )}
           {/* Diplay Story */}
-          {video && character && <Story scene={video} character={character} />}
+          {video && character && <Story video={video} character={character} />}
         </Flex>
       </Stack>
     </Layout>

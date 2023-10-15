@@ -11,7 +11,7 @@ export interface Character {
 }
 
 export interface StoryProps {
-  scene: Video;
+  video: Video;
   character: CharacterProps;
 }
 

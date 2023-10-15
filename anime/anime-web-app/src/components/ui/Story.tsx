@@ -6,7 +6,7 @@ import { StoryProps } from "@/types";
 
 
 
-const Story: FC<StoryProps> = ({ scene, character }) => {
+const Story: FC<StoryProps> = ({ video, character }) => {
   const [prompt, setPrompt] = useState<string>("");
   const [showInput, setShowInput] = useState<boolean>(false);
 
