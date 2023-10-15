@@ -61,6 +61,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
       if (!character.imageUrl) {
         throw new Error("Character image is not defined");
       }
+      setIsPanelLoading(false);
       return {
         imageUrl: character.imageUrl,
         characterName: character.name,
@@ -147,37 +148,39 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
       setActivePanel(initialNarration);
       const nextPanelData = await fetchNextPanel(scene);
       setNextPanel(nextPanelData);
-    } else if (messageCount % 5 === 0) {
+    } else if (messageCount % 5 === 0 && messageCount !== 0) {
       // If it's time for a narration, display the next narration
       if (nextNarrationPanel) {
         setActivePanel(nextNarrationPanel);
         setNextNarrationPanel(null);
+        const nextNarration = await fetchNextNarration(scene);
+        setNextNarrationPanel(nextNarration);
       } else {
         const nextNarration = await fetchNextNarration(scene);
         setActivePanel(nextNarration);
       }
+      if (!nextPanel) {
       // Pre-fetch the next panel
       const nextPanelData = await fetchNextPanel(scene);
       setNextPanel(nextPanelData);
+      }
     } else {
       // If it's time for a panel, display the next panel
       if (nextPanel) {
         setActivePanel(nextPanel);
-        setNextPanel(null);
+        const nextPanelData = await fetchNextPanel(scene);
+        setNextPanel(nextPanelData);
       } else {
         const nextPanelData = await fetchNextPanel(scene);
         setActivePanel(nextPanelData);
+        const nextPanelData2 = await fetchNextPanel(scene);
+        setNextPanel(nextPanelData2);
       }
 
-      if (!nextNarrationPanel) {
-      // Pre-fetch the next narration
-      const nextNarration = await fetchNextNarration(scene);
-      setNextNarrationPanel(nextNarration);
-      }
     }
   
     setMessageCount((count) => count + 1);
-  }, [fetchInitialNarration, fetchNextNarration, messageCount, nextNarrationPanel, nextPanel, scene]);
+  }, [fetchInitialNarration, messageCount, fetchNextNarration, nextNarrationPanel, nextPanel, scene]);
 
   useEffect(() => {
     if (messageCount === 0) {
