@@ -119,3 +119,8 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: str):
     except Exception as e:
         #TODO end Thread in a nice way
         print("ERROR", str(e))
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

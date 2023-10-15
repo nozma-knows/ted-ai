@@ -1,36 +1,44 @@
 import autogen
 import queue
 import openai
+import os
 
 openai.log='debug'
 
 config_list = [
     {
         "model": "gpt-3.5-turbo-0613",
-        "api_key": "<YOUR KEY HERE>"
+        "api_key": os.getenv("OPENAI_API_KEY"),
     }
 ]
 llm_config = {
-    "model":"gpt-3.5-turbo-0613",
+    "model":"gpt-4",
     "temperature": 0,
     "config_list": config_list,
         "functions": [
         {
-            "name": "search_db",
-            "description": "Search database for order status",
+            "name": "create_scene",
+            "description": "Create a dynamic scene and a list of relevant characters",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "order_number": {
-                        "type": "integer",
-                        "description": "Order number",
+                    "characters": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "description": " A description of a character in the scene. Describing how they should look, act, and what their goal is in the scene."
+                        }
                     },
-                    "customer_number": {
+                    "imagery": {
                         "type": "string",
-                        "description": "Customer number",
+                        "description": "a description of the setting of the scene",
+                    },
+                    "plot": {
+                        "type": "string",
+                        "description": "a description of scenes plot"
                     }
                 },
-                "required": ["order_number","customer_number"],
+                "required": ["characters","imagery", "plot"],
             },
         },
     ],
@@ -86,12 +94,6 @@ class AutogenChat():
 
         # add the queues to communicate 
         self.user_proxy.set_queues(self.client_sent_queue, self.client_receive_queue)
-
-        self.user_proxy.register_function(
-            function_map={
-                "search_db": self.search_db
-            }
-        )
 
     def set_thread(self, thread):
         self.thread = thread
