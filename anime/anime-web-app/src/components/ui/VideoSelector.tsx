@@ -90,6 +90,8 @@ const Video = ({ video, setVideo, setScene, setLoading }: VideoProps) => {
           fontWeight={"bold"}
           bottom={2}
           px={2}
+          textAlign={"center"}
+          fontSize="sm"
         >
           <Flex
             w="full"
