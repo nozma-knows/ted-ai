@@ -3,7 +3,7 @@ from typing import Dict, List
 from summary_get import Character, vid2scene, Scene
 from marvin import openai
 from pydantic import BaseModel, Field
-from demo_scene import scene_to_text, scene
+from demo_scene import scene_to_text
 
 
 # Define the Panel model
