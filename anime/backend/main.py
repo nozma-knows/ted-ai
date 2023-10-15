@@ -25,6 +25,9 @@ chat_history = []
 # Initialize the FastAPI app
 app = FastAPI()
 
+# Initialize the scene
+scene = None
+
 
 @app.get("/next_panel/")
 async def send_message():
@@ -64,6 +67,9 @@ class UserInput(BaseModel):
 
 @app.post("/generate_user_character/")
 async def generate_user_character(user_input: UserInput):
+    global scene
+    if scene is None:
+        return {"response": "Please generate a scene first.", "error": True}
     # Define the initial message
     initial_message = {
         "role": "system",
@@ -89,6 +95,20 @@ async def generate_user_character(user_input: UserInput):
     scene.characters.append(model)
 
     return {"response": model}
+
+
+class VideoInput(BaseModel):
+    video_id: str = Field(description="The ID of the video.")
+
+
+@app.post("/generate_scene/")
+async def generate_scene(video_input: VideoInput):
+    # Call the vid2scene method with the video_id from the request body
+    global scene
+    scene = vid2scene(video_input.video_id)
+
+    # Return the Scene object
+    return {"response": scene}
 
 
 if __name__ == "__main__":
