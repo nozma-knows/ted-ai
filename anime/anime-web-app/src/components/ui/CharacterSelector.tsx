@@ -6,9 +6,16 @@ import {
   Input,
   Textarea,
   Button,
+  Flex,
 } from "@chakra-ui/react";
 import { CharacterProps } from "@/types";
-
+import { motion } from "framer-motion";
+import {
+  MotionButton,
+  MotionFormControl,
+  gridAnimation,
+  itemAnimation,
+} from "../Motion";
 
 interface Props {
   setCharacter: (character: CharacterProps) => void;
@@ -24,11 +31,15 @@ const CharacterSelector: FC<Props> = ({ setCharacter }) => {
     setCharacter(formData);
   }
 
-
   return (
     <Stack>
-      <form onSubmit={handleSubmit}>
-        <FormControl isRequired>
+      <motion.form
+        onSubmit={handleSubmit}
+        variants={gridAnimation}
+        initial="hidden"
+        animate="show"
+      >
+        <MotionFormControl isRequired variants={itemAnimation}>
           <FormLabel htmlFor="name">First Name</FormLabel>
           <Input
             type="text"
@@ -43,9 +54,9 @@ const CharacterSelector: FC<Props> = ({ setCharacter }) => {
             }
             placeholder="Enter your first name"
           />
-        </FormControl>
+        </MotionFormControl>
 
-        <FormControl mt={4} isRequired>
+        <MotionFormControl mt={4} isRequired variants={itemAnimation}>
           <FormLabel htmlFor="description">Description</FormLabel>
           <Textarea
             id="description"
@@ -59,12 +70,19 @@ const CharacterSelector: FC<Props> = ({ setCharacter }) => {
             }
             placeholder="Enter a short description of yourself"
           />
-        </FormControl>
+        </MotionFormControl>
 
-        <Button mt={4} colorScheme="teal" type="submit">
-          Submit
-        </Button>
-      </form>
+        <Flex justifyContent={"center"}>
+          <MotionButton
+            mt={4}
+            colorScheme="teal"
+            type="submit"
+            variants={itemAnimation}
+          >
+            Submit
+          </MotionButton>
+        </Flex>
+      </motion.form>
     </Stack>
   );
 };
