@@ -3,6 +3,7 @@ import { Stack, Flex, Input, Button } from "@chakra-ui/react";
 import { useMusicContext } from "@/context/MusicContext";
 import BackgroundMusic from "../BackgroundMusic";
 import { Narration, Panel, Scene, StoryProps } from "@/types";
+import Image from "next/image";
 
 interface PanelData {
   imageUrl: string;
@@ -18,7 +19,8 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   const [messageCount, setMessageCount] = useState<number>(0);
   const [activePanel, setActivePanel] = useState<PanelData | null>(null);
   const [nextPanel, setNextPanel] = useState<PanelData | null>(null);
-  const [nextNarrationPanel, setNextNarrationPanel] = useState<PanelData | null>(null);
+  const [nextNarrationPanel, setNextNarrationPanel] =
+    useState<PanelData | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -27,16 +29,18 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   };
 
   const generateSceneImages = async (scene: Scene) => {
-    const imagePromises = scene.prompts.map(prompt =>
-      fetch('/api/leap/generate-scene-image', {
-        method: 'POST',
+    const imagePromises = scene.prompts.map((prompt) =>
+      fetch("/api/leap/generate-scene-image", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt  }),
-      }).then(response => response.json()).then(data => data.imageUrl)
+        body: JSON.stringify({ prompt }),
+      })
+        .then((response) => response.json())
+        .then((data) => data.imageUrl)
     );
-  
+
     const imageUrls = await Promise.all(imagePromises);
     console.log("sceneImages", imageUrls);
     return imageUrls;
@@ -46,10 +50,10 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     const response = await fetch(`${backendUrl}/next_panel/`);
     const data = await response.json();
     const panel: Panel = data.response;
-  
+
     // Find the character in the scene with the same name as the panel's character
-    const character = scene.characters.find(c => c.name === panel.character);
-  
+    const character = scene.characters.find((c) => c.name === panel.character);
+
     // If the character is found, return the panel data
     if (character) {
       if (!character.imageUrl) {
@@ -61,18 +65,18 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
         text: panel.text,
       };
     }
-  
+
     throw new Error("Character not found in scene");
   };
-  
+
   const fetchNextNarration = async (scene: Scene): Promise<PanelData> => {
     const response = await fetch(`${backendUrl}/next_narration/`);
     const data = await response.json();
     const narration: Narration = data.response;
-  
+
     // Generate a new scene image
     const newSceneImageUrls = await generateSceneImages(scene);
-  
+
     // If the narration's name is "Narrator", return the narration data
     if (!scene.imageUrls) {
       throw new Error("Scene image is not defined");
@@ -84,6 +88,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     };
   };
 
+<<<<<<< Updated upstream
   const fetchInitialNarration = async (scene: Scene): Promise<PanelData> => {
     const response = await fetch(`${backendUrl}/first_narration/`);
     const data = await response.json();
@@ -108,32 +113,45 @@ useEffect(() => {
   fetchInitialNarration(scene).then(setActivePanel);
   fetchNextPanel(scene).then(setNextPanel);
 }, [scene]);
+=======
+  // Fetch initial narration and image when component mounts
+  useEffect(() => {
+    fetchNextNarration(scene).then(setActivePanel);
+    fetchNextPanel(scene).then(setNextPanel);
+  }, [scene]);
+>>>>>>> Stashed changes
 
-useEffect(() => {
-  if (nextNarrationPanel === null) {
-    fetchNextNarration(scene).then(setNextNarrationPanel);
-  }
-}, [nextNarrationPanel, scene]);
+  useEffect(() => {
+    if (nextNarrationPanel === null) {
+      fetchNextNarration(scene).then(setNextNarrationPanel);
+    }
+  }, [nextNarrationPanel, scene]);
 
-const handleNext = () => {
-  if (messageCount % 5 === 0 && nextNarrationPanel) {
-    setActivePanel(nextNarrationPanel);
-    setNextNarrationPanel(null); // Set nextNarrationPanel to null after displaying it
-  } else if (nextPanel) {
-    setActivePanel(nextPanel);
-  }
-  setMessageCount(count => count + 1);
-  fetchNextPanel(scene).then(setNextPanel);
-};
+  const handleNext = () => {
+    if (messageCount % 5 === 0 && nextNarrationPanel) {
+      setActivePanel(nextNarrationPanel);
+      setNextNarrationPanel(null); // Set nextNarrationPanel to null after displaying it
+    } else if (nextPanel) {
+      setActivePanel(nextPanel);
+    }
+    setMessageCount((count) => count + 1);
+    fetchNextPanel(scene).then(setNextPanel);
+  };
   const { music } = useMusicContext();
 
   return (
     <Stack w="full" h="full" maxW={"900"}>
       {music && music.media_uri && <BackgroundMusic src={music.media_uri} />}
 
-      <Flex w="full" h="full" bg="blackAlpha.400" rounded="md">
+      <Flex
+        w="full"
+        h="full"
+        bg="blackAlpha.400"
+        rounded="md"
+        position="relative"
+      >
         Story View
-        {activePanel && <img src={activePanel.imageUrl} alt="Active" />}
+        {activePanel && <Image src={activePanel.imageUrl} alt="Active" fill />}
       </Flex>
 
       {showInput ? (
@@ -153,7 +171,9 @@ const handleNext = () => {
           </Flex>
         </form>
       ) : (
-        <Button onClick={handleNext} colorScheme="teal">Next</Button>
+        <Button onClick={handleNext} colorScheme="teal">
+          Next
+        </Button>
       )}
     </Stack>
   );
