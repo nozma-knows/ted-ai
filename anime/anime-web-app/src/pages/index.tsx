@@ -7,6 +7,10 @@ import { useEffect, useState } from "react";
 import { Character, CharacterProps, Scene, Video } from "@/types";
 import CharacterSelector from "@/components/ui/CharacterSelector";
 
+import Image from "next/image";
+
+import logo from "@/assets/vid-2-manga-logo.png";
+
 export default function Home() {
   const [video, setVideo] = useState<Video | null>(null);
   const [character, setCharacter] = useState<CharacterProps | null>(null);
@@ -171,13 +175,20 @@ export default function Home() {
       <Layout>
         <Stack h="full">
           <Heading>Video 2 Manga</Heading>
-          <Flex
-            w="full"
-            aspectRatio={16 / 9}
-            justifyContent={"center"}
-            alignItems={"center"}
-          >
-            <Spinner />
+          <Flex w="full" justifyContent={"center"}>
+            <Stack w="full" maxW="600" gap="4">
+              <Text fontWeight="bold" fontSize="2xl">
+                Tell us about yourself
+              </Text>
+              <Flex
+                w="full"
+                aspectRatio={16 / 9}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <Spinner />
+              </Flex>
+            </Stack>
           </Flex>
         </Stack>
       </Layout>
@@ -191,18 +202,18 @@ export default function Home() {
         <Flex w="full" h="full" justifyContent="center">
           {/* Display Scene Selector */}
           {!video && (
-            <Stack w="full" maxW="600">
-              <Text fontWeight="bold" fontSize="2xl">
-                Select a scene
-              </Text>
+            <Stack w="full" maxW="600" gap="4">
+              <Flex fontWeight="bold" fontSize="2xl">
+                Select a video
+              </Flex>
               <VideoSelector setVideo={setVideo} setScene={setScene} />
             </Stack>
           )}
           {/* Display Character Selector */}
           {video && !character && (
-            <Stack w="full" maxW="600">
+            <Stack w="full" maxW="600" gap="4">
               <Text fontWeight="bold" fontSize="2xl">
-                Select a character
+                Tell us about yourself
               </Text>
               <CharacterSelector setCharacter={setCharacter} />
             </Stack>

@@ -29,6 +29,7 @@ export interface Scene {
 export interface Video {
   title: string;
   videoId?: string;
+  imageUrl: string;
 }
 
 export interface VideoProps {

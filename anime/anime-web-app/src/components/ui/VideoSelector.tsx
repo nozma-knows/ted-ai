@@ -1,5 +1,7 @@
 import { FC, useState } from "react";
 
+import Image from "next/image";
+
 import { Flex, Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
 
 import { motion } from "framer-motion";
@@ -15,17 +17,20 @@ const videos = [
   {
     title: "SpaceX Launch",
     videoId: "652b5c1b43e8c47e4eb4829b",
-    imageUrl: "https://github.com/nozma-knows/ted-ai/assets/42284494/4773dc05-c497-419d-864c-d1a5f081e5f0"
+    imageUrl:
+      "https://github.com/nozma-knows/ted-ai/assets/42284494/4773dc05-c497-419d-864c-d1a5f081e5f0",
   },
   {
     title: "Steve Irwin feeding his Crocs",
     videoId: "652c1dfd43e8c47e4eb483ec",
-    imageUrl: "https://github.com/nozma-knows/ted-ai/assets/42284494/ae17b93a-15f2-4564-b668-08e0e0b98df7"
+    imageUrl:
+      "https://github.com/nozma-knows/ted-ai/assets/42284494/ae17b93a-15f2-4564-b668-08e0e0b98df7",
   },
   {
     title: "1984 Apple Macintosh Commercial",
     videoId: "652c1e2c43e8c47e4eb483ed",
-    imageUrl: "https://github.com/nozma-knows/ted-ai/assets/42284494/688cea24-6aaf-40c2-bf8c-1e82ccdd606a"
+    imageUrl:
+      "https://github.com/nozma-knows/ted-ai/assets/42284494/688cea24-6aaf-40c2-bf8c-1e82ccdd606a",
   },
   {
     title: "Anakin vs Obiwan",
@@ -42,9 +47,9 @@ const Video = ({ video, setVideo, setScene, setLoading }: VideoProps) => {
     console.log(video);
     console.log(backendUrl);
     const response = await fetch(`${backendUrl}/generate_scene/`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         video_id: video.videoId,
@@ -52,7 +57,6 @@ const Video = ({ video, setVideo, setScene, setLoading }: VideoProps) => {
     });
 
     const data = await response.json();
-
 
     console.log(data);
 
@@ -64,18 +68,44 @@ const Video = ({ video, setVideo, setScene, setLoading }: VideoProps) => {
 
   return (
     <MotionGridItem
-      // bg="blackAlpha.400"
       aspectRatio={1 / 1}
       rounded="md"
-      width={'md'}
+      width="full"
       variants={itemAnimation}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       cursor="pointer"
       onClick={() => videoClicked(video)}
     >
-      <Text>{video.title}</Text>
-      <img width={'500px'} src={video.imageUrl}></img>
+      <Flex w="full" aspectRatio={1} position="relative">
+        <Image
+          fill
+          src={video.imageUrl}
+          alt={`Video Image ${video.title}`}
+          className="rounded-md"
+        />
+        <Flex
+          w="full"
+          position="absolute"
+          textColor="white"
+          fontWeight={"bold"}
+          bottom={2}
+          px={2}
+          textAlign={"center"}
+          fontSize="sm"
+        >
+          <Flex
+            w="full"
+            bg="blackAlpha.800"
+            justifyContent={"center"}
+            alignItems={"center"}
+            rounded="md"
+            p="2"
+          >
+            {video.title}
+          </Flex>
+        </Flex>
+      </Flex>
     </MotionGridItem>
   );
 };
