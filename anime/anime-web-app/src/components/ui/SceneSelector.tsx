@@ -1,6 +1,8 @@
 import { FC } from "react";
 
-import { Box, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+import { Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+
+import { motion } from "framer-motion";
 
 export interface Scene {
   title: string;
@@ -29,13 +31,16 @@ const scenes = [
 const Scene = ({ scene, setScene }: SceneProps) => {
   return (
     <GridItem
+      as={motion.div}
       bg="blackAlpha.400"
       aspectRatio={1 / 1}
       rounded="md"
-      border="2px solid transparent"
-      _hover={{
-        border: "2px solid black",
-      }}
+      // border="2px solid transparent"
+      // _hover={{
+      //   border: "2px solid black",
+      // }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       cursor="pointer"
       onClick={() => setScene(scene)}
     >
