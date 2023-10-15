@@ -1,125 +1,47 @@
-# to test this code 
-# add your openai key to the config_list on autogen_chat.py
-# run the following code in the same directory 
-# uvicorn main:app 
-# access http://localhost:8000
-# send the following message:
-# send ->  What is the status of my order?
-# send ->  order 111
-# send ->  customer 222
-# the response should be Delivered 
-# send -> exit to end
-# CTRL+C terminate the process
+from typing import Dict, List
+from summary_get import Character
+from summary_get import vid2scene, Scene
+from fastapi import FastAPI
 
+scene = Scene(
+    name='Rocket Launch Chronicles', 
+    imagery="A vast expanse of sky and earth, punctuated by the towering forms of SpaceX's Falcon 9 and Starship rockets. On the ground, a sea of excited spectators eagerly awaiting the moment of launch.",
+      plot="In a world where space exploration is the pinnacle of human achievement, SpaceX's Starship and Falcon 9 rockets play a crucial role. Each launch represents a thrilling and high-stakes mission, with the fate of humanity's future in space hanging in the balance. The story unfolds through the eyes of a young narrator, who guides the audience through the intricacies of each launch, the technology of the rockets, and the significance of their missions. As the series progresses, the narrator becomes more involved in the launches, moving from observer to participant in these historic moments.",
+      characters=[Character(name='The Narrator', description='A charismatic young individual with a deep understanding of space exploration and technology.', imagery='A young character, always seen with a rocket launch blueprint or a book about space. Wears casual attire with a SpaceX logo.', personality='Inquisitive, knowledgeable, and passionate about space exploration. Has a knack for breaking down complex information in an engaging and accessible way.'), Character(name='Starship', description='A monumental rocket that represents hope and ambition for the future of space exploration.', imagery='A towering and sleek rocket, gleaming under the sun, ready for launch.', personality='Ambitious, reliable, and awe-inspiring. Represents the spirit of human endeavour in space exploration.'), Character(name='Falcon 9', description='A smaller but equally important rocket that carries out crucial missions in space.', imagery='A high-tech rocket with powerful engines, always ready for the next launch.', personality="Determined, reliable, and resourceful. Plays a key role in humanity's exploration of space.")]
+)
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
-from fastapi.responses import HTMLResponse
-import uuid
-from autogen_chat import AutogenChat
-import threading
-import asyncio
 
 app = FastAPI()
-app.autogen_chat = {}
 
+class ChatHistory:
+    def __init__(self):
+        self.history = []
+
+    def add_message(self, message: str):
+        self.history.append(message)
+
+    def get_history(self) -> List[Dict[str, str]]:
+        return self.history
+
+chat_history = ChatHistory()
 
 @app.get("/")
-async def get(request: Request):
-    chat_id = str(uuid.uuid1())
-    html = f"""
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <h2>Your ID: <span id="ws-id"></span></h2>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            function showMessage(msg) {{
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(msg)
-                message.appendChild(content)
-                messages.appendChild(message)
-            }};
+def read_root():
+    return {"Hello": "World"}
 
-            var chat_id = "{chat_id}"
-            document.querySelector("#ws-id").textContent = chat_id;
-            var ws = new WebSocket("ws://localhost:8000/ws/{chat_id}");
-            ws.onmessage = function(event) {{
-                showMessage(event.data)
-            }};
-            function sendMessage(event) {{
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                showMessage(input.value)
-                input.value = ''
-                event.preventDefault()
-            }}
-        </script>
-    </body>
-</html>
-"""
-    return HTMLResponse(html)
+@app.get("/send_message/")
+async def send_message():
+    message = "Hello World"
+    chat_history.add_message(message)
+    # Here, you can process the message and generate a response.
+    # For this example, we'll echo back the message.
+    response_message = f"Echo: {message}"
+    chat_history.add_message(response_message)
+    return {"response": response_message}
 
-
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: list[AutogenChat] = []
-
-    async def connect(self, autogen_chat: AutogenChat):
-        await autogen_chat.websocket.accept()
-        self.active_connections.append(autogen_chat)
-
-    def disconnect(self, autogen_chat: AutogenChat):
-        self.active_connections.remove(autogen_chat)
-
-    async def send_local_message(self, message: str, autogen_chat: AutogenChat):
-        await autogen_chat.websocket.send_text(message)
-
-
-manager = ConnectionManager()
-
-
-def do_work(autogen_chat):
-    autogen_chat.start()
-
-@app.websocket("/ws/{chat_id}")
-async def websocket_endpoint(websocket: WebSocket, chat_id: str):
-    try:
-        autogen_chat = AutogenChat(chat_id=chat_id, websocket=websocket)
-        await manager.connect(autogen_chat)
-        t = threading.Thread(target=do_work, args=(autogen_chat,)) 
-        autogen_chat.set_thread(t)
-        t.start()
-        while True:
-            # wait for client message
-            data = await autogen_chat.websocket.receive_text()
-            # send data to thread 
-            autogen_chat.client_sent_queue.put(data)
-            # wait for response
-            reply = autogen_chat.client_receive_queue.get(block=True)
-            if reply != "exit":
-                # send to the client on websocket
-                await autogen_chat.websocket.send_text(reply)
-            else:
-                autogen_chat.thread.join()
-                print("####FINISHED")
-                raise WebSocketDisconnect
-
-    except WebSocketDisconnect:
-        manager.disconnect(autogen_chat)
-    except Exception as e:
-        #TODO end Thread in a nice way
-        print("ERROR", str(e))
-
+@app.get("/get_history/")
+async def get_history():
+    return chat_history.get_history()
 
 if __name__ == "__main__":
     import uvicorn

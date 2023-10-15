@@ -12,7 +12,7 @@ openai.log='debug'
 
 config_list = [
     {
-        "model": "gpt-3.5-turbo-0613",
+       "model":"gpt-4",
         "api_key": os.getenv("OPENAI_API_KEY"),
     }
 ]
@@ -33,7 +33,9 @@ class UserProxyWebAgent(autogen.UserProxyAgent):
 
     # this is the method we override to interact with the chat
     def get_human_input(self, prompt: str) -> str:
+        chat_messages = self.chat_messages
         last_message = self.last_message()
+
         if last_message["content"]:
             self.client_receive_queue.put(last_message["content"])
             reply = self.client_sent_queue.get(block=True)
@@ -88,7 +90,6 @@ class AutogenChat():
             name="IanTheAstronaut",
             human_input_mode="ALWAYS", ######## YOU NEED TO KEEP ALWAYS
             max_consecutive_auto_reply=10,
-            is_termination_msg=lambda x: x.get("content", "") and x.get("content", "").rstrip().endswith("TERMINATE"),
             code_execution_config=False,
             llm_config=llm_config,
 
