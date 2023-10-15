@@ -40,7 +40,6 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   const [messageCount, setMessageCount] = useState<number>(0);
   const [activePanel, setActivePanel] = useState<PanelData | null>(null);
   const [nextPanel, setNextPanel] = useState<PanelData | null>(null);
-  const [speech, setSpeech] = useState<any | null>(null);
 
   const [isPanelLoading, setIsPanelLoading] = useState<boolean>(false);
   const handleSubmit = (e: FormEvent) => {
@@ -66,22 +65,6 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     console.log("sceneImages", imageUrls);
     return imageUrls;
   };
-
-  async function generateSpeech(text: string, voiceId: string) {
-    try {
-      const response = await fetch(`../api/eleven-labs/text-to-speech/`, {
-        method: "POST",
-        body: JSON.stringify({
-          text,
-          voiceId,
-        }),
-      });
-      const data = await response.json();
-      setSpeech(data);
-    } catch (error) {
-      console.log("Error generating music: ", error);
-    }
-  }
 
   const fetchNextPanel = useCallback(
     async (scene: Scene): Promise<PanelData> => {
@@ -193,16 +176,6 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     fetchAndSetInitialData();
   }, [messageCount, fetchNextNarration, fetchNextPanel, scene]);
   const { music } = useMusicContext();
-
-  useEffect(() => {
-    if (activePanel) {
-      generateSpeech(activePanel.text, narratorVoiceId);
-    }
-  }, [activePanel]);
-
-  useEffect(() => {
-    console.log("speech: ", speech);
-  }, [speech]);
 
   return (
     <Stack w="full" h="full" maxW={"600"}>
