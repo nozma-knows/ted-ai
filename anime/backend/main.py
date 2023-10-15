@@ -8,9 +8,9 @@ from demo_scene import scene_to_text, scene
 
 # Define the Panel model
 class Panel(BaseModel):
-    character: str = Field(..., description="The character name who is speaking.")
+    character: str = Field(description="The character name who is speaking.")
     text: str = Field(
-        ..., description="The short text the character is speaking. The character"
+        description="The short text the character is speaking. The character"
     )
 
 
@@ -52,7 +52,7 @@ async def send_message():
     new_message = {"role": "assistant", "content": panel_to_string(model)}
     chat_history.append(new_message)
 
-    return {"response": new_message}
+    return {"response": model}
 
 
 @app.get("/get_history/")
