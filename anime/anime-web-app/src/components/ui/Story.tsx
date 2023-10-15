@@ -1,4 +1,4 @@
-import { FC, FormEvent, useEffect, useState } from "react";
+import { FC, FormEvent, useCallback, useEffect, useState } from "react";
 import { Stack, Flex, Input, Button, Text } from "@chakra-ui/react";
 import { useMusicContext } from "@/context/MusicContext";
 import BackgroundMusic from "../BackgroundMusic";
@@ -100,7 +100,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     };
   };
 
-  const fetchNextNarration = async (scene: Scene): Promise<PanelData> => {
+  const fetchNextNarration = useCallback(async (scene: Scene): Promise<PanelData> => {
     const response = await fetch(`${backendUrl}/next_narration/`);
     const data = await response.json();
     const narration: Narration = data.response;
@@ -117,9 +117,9 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
       characterName: "Narrator",
       text: narration.text,
     };
-  };
+  }, []);
 
-  const fetchInitialNarration = async (scene: Scene): Promise<PanelData> => {
+  const fetchInitialNarration = useCallback(async (scene: Scene): Promise<PanelData> => {
     const response = await fetch(`${backendUrl}/first_narration/`);
     const data = await response.json();
     const narration: Narration = data.response;
@@ -136,30 +136,56 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
       characterName: "Narrator",
       text: narration.text,
     };
-  };
+  }, []);
 
-  // Fetch initial narration and image when component mounts
-  useEffect(() => {
-    fetchInitialNarration(scene).then(setActivePanel);
-    fetchNextPanel(scene).then(setNextPanel);
-  }, [scene]);
 
-  useEffect(() => {
-    if (nextNarrationPanel === null) {
-      fetchNextNarration(scene).then(setNextNarrationPanel);
+
+
+  const handleNext = useCallback(async () => {
+    // If it's the start of the scene, fetch the initial narration
+    if (messageCount === 0) {
+      const initialNarration = await fetchInitialNarration(scene);
+      setActivePanel(initialNarration);
+      const nextPanelData = await fetchNextPanel(scene);
+      setNextPanel(nextPanelData);
+    } else if (messageCount % 5 === 0) {
+      // If it's time for a narration, display the next narration
+      if (nextNarrationPanel) {
+        setActivePanel(nextNarrationPanel);
+        setNextNarrationPanel(null);
+      } else {
+        const nextNarration = await fetchNextNarration(scene);
+        setActivePanel(nextNarration);
+      }
+      // Pre-fetch the next panel
+      const nextPanelData = await fetchNextPanel(scene);
+      setNextPanel(nextPanelData);
+    } else {
+      // If it's time for a panel, display the next panel
+      if (nextPanel) {
+        setActivePanel(nextPanel);
+        setNextPanel(null);
+      } else {
+        const nextPanelData = await fetchNextPanel(scene);
+        setActivePanel(nextPanelData);
+      }
+
+      if (!nextNarrationPanel) {
+      // Pre-fetch the next narration
+      const nextNarration = await fetchNextNarration(scene);
+      setNextNarrationPanel(nextNarration);
+      }
     }
-  }, [nextNarrationPanel, scene]);
-
-  const handleNext = () => {
-    if (messageCount % 5 === 0 && nextNarrationPanel) {
-      setActivePanel(nextNarrationPanel);
-      setNextNarrationPanel(null); // Set nextNarrationPanel to null after displaying it
-    } else if (nextPanel) {
-      setActivePanel(nextPanel);
-    }
+  
     setMessageCount((count) => count + 1);
-    fetchNextPanel(scene).then(setNextPanel);
-  };
+  }, [fetchInitialNarration, fetchNextNarration, messageCount, nextNarrationPanel, nextPanel, scene]);
+
+  useEffect(() => {
+    if (messageCount === 0) {
+      handleNext();
+    }
+  }, [messageCount, handleNext]);
+  
   const { music } = useMusicContext();
 
   return (
