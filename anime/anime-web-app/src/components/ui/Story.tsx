@@ -1,5 +1,5 @@
 import { FC, FormEvent, useEffect, useState } from "react";
-import { Stack, Flex, Input, Button } from "@chakra-ui/react";
+import { Stack, Flex, Input, Button, Text } from "@chakra-ui/react";
 import { useMusicContext } from "@/context/MusicContext";
 import BackgroundMusic from "../BackgroundMusic";
 import { Narration, Panel, Scene, StoryProps } from "@/types";
@@ -88,15 +88,14 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     };
   };
 
-<<<<<<< Updated upstream
   const fetchInitialNarration = async (scene: Scene): Promise<PanelData> => {
     const response = await fetch(`${backendUrl}/first_narration/`);
     const data = await response.json();
     const narration: Narration = data.response;
-  
+
     // Generate a new scene image
     const newSceneImageUrls = await generateSceneImages(scene);
-  
+
     // If the narration's name is "Narrator", return the narration data
     if (!scene.imageUrls) {
       throw new Error("Scene image is not defined");
@@ -108,18 +107,11 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     };
   };
 
-// Fetch initial narration and image when component mounts
-useEffect(() => {
-  fetchInitialNarration(scene).then(setActivePanel);
-  fetchNextPanel(scene).then(setNextPanel);
-}, [scene]);
-=======
   // Fetch initial narration and image when component mounts
   useEffect(() => {
-    fetchNextNarration(scene).then(setActivePanel);
+    fetchInitialNarration(scene).then(setActivePanel);
     fetchNextPanel(scene).then(setNextPanel);
   }, [scene]);
->>>>>>> Stashed changes
 
   useEffect(() => {
     if (nextNarrationPanel === null) {
@@ -151,7 +143,29 @@ useEffect(() => {
         position="relative"
       >
         Story View
-        {activePanel && <Image src={activePanel.imageUrl} alt="Active" fill />}
+        {activePanel && (
+          <Flex>
+            <Image src={activePanel.imageUrl} alt="Active" fill />
+            <Flex bg="blue" w="full">
+              <Flex
+                w="full"
+                position="absolute"
+                left="0"
+                bottom={2}
+                textColor="white"
+                rounded="md"
+                p={4}
+              >
+                <Stack bg="blackAlpha.800" textColor="white" p="4" rounded="md">
+                  <Text fontWeight="bold" fontSize="xl">
+                    {activePanel.characterName}
+                  </Text>
+                  <Text fontSize="lg">{activePanel.text}</Text>
+                </Stack>
+              </Flex>
+            </Flex>
+          </Flex>
+        )}
       </Flex>
 
       {showInput ? (
