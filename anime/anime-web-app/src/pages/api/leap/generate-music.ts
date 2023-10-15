@@ -15,7 +15,7 @@ export default async function handler(
     headers: {
       accept: "application/json",
       "content-type": "application/json",
-      authorization: `Bearer ${process.env.NEXT_PUBLIC_LEAP_API_KEY}`,
+      authorization: `Bearer ${process.env.LEAP_API_KEY}`,
     },
     body: JSON.stringify({
       prompt: body.prompt,

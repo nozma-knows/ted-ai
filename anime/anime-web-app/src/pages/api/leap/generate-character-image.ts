@@ -15,7 +15,7 @@ export default async function handler(
 ) {
   const modelId = "26a1a203-3a46-42cb-8cfa-f4de075907d8";
   const url = `https://api.tryleap.ai/api/v1/images/models/${modelId}/inferences`;
-  const body = JSON.parse(req.body);
+  const body = req.body;
 
   console.log("body: ", body);
 
@@ -50,7 +50,7 @@ export default async function handler(
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        authorization: `Bearer ${process.env.NEXT_PUBLIC_LEAP_API_KEY}`,
+        authorization: `Bearer ${process.env.LEAP_API_KEY}`,
       },
       body: JSON.stringify({
         prompt: prompt,

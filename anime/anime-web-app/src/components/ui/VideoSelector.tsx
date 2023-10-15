@@ -67,6 +67,7 @@ const Video = ({ video, setVideo, setScene }: VideoProps) => {
 
     // Update the video in the parent component
     setVideo(video);
+    setScene(data.response);
   }
 
 
