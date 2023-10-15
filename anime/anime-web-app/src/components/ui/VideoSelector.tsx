@@ -13,17 +13,25 @@ import {
 
 const videos = [
   {
-    title: "Video 1",
+    title: "SpaceX Launch",
     videoId: "652b5c1b43e8c47e4eb4829b",
+    imageUrl: "https://github.com/nozma-knows/ted-ai/assets/42284494/4773dc05-c497-419d-864c-d1a5f081e5f0"
   },
   {
-    title: "Video 2",
+    title: "Steve Irwin feeding his Crocs",
+    videoId: "652c1dfd43e8c47e4eb483ec",
+    imageUrl: "https://github.com/nozma-knows/ted-ai/assets/42284494/ae17b93a-15f2-4564-b668-08e0e0b98df7"
   },
   {
-    title: "Video 3",
+    title: "1984 Apple Macintosh Commercial",
+    videoId: "652c1e2c43e8c47e4eb483ed",
+    imageUrl: "https://github.com/nozma-knows/ted-ai/assets/42284494/688cea24-6aaf-40c2-bf8c-1e82ccdd606a"
   },
   {
-    title: "Video 4",
+    title: "Anakin vs Obiwan",
+    imageUrl: "https://github.com/nozma-knows/ted-ai/assets/42284494/9737bcd0-1023-429b-ab2e-f2df41e6e9e7"
+
+    
   },
 ];
 
@@ -56,9 +64,10 @@ const Video = ({ video, setVideo, setScene, setLoading }: VideoProps) => {
 
   return (
     <MotionGridItem
-      bg="blackAlpha.400"
+      // bg="blackAlpha.400"
       aspectRatio={1 / 1}
       rounded="md"
+      width={'md'}
       variants={itemAnimation}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
@@ -66,6 +75,7 @@ const Video = ({ video, setVideo, setScene, setLoading }: VideoProps) => {
       onClick={() => videoClicked(video)}
     >
       <Text>{video.title}</Text>
+      <img width={'500px'} src={video.imageUrl}></img>
     </MotionGridItem>
   );
 };
