@@ -2,7 +2,7 @@ import Layout from "@/components/Layout";
 
 import VideoSelector from "@/components/ui/VideoSelector";
 import Story from "@/components/ui/Story";
-import { Flex, Stack, Heading, Text } from "@chakra-ui/react";
+import { Flex, Stack, Heading, Text, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Character, CharacterProps, Scene, Video } from "@/types";
 import CharacterSelector from "@/components/ui/CharacterSelector";
@@ -15,6 +15,7 @@ export default function Home() {
   const [scene, setScene] = useState<Scene | null>(null);
   const [generatingScene, setGeneratingScene] = useState<Scene | null>(null);
   const [finalScene, setFinalScene] = useState<Scene | null>(null);
+  const [loadingCharacter, setLoadingCharacter] = useState<boolean>(false);
 
   useEffect(() => {
     // Function to generate image for a character
@@ -37,55 +38,65 @@ export default function Home() {
 
     // Function to generate image for a scene
     // Function to generate image for a scene
-const generateSceneImages = async (scene: Scene) => {
-  const imagePromises = scene.prompts.map(prompt =>
-    fetch('/api/leap/generate-scene-image', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt  }),
-    }).then(response => response.json()).then(data => data.imageUrl)
-  );
+    const generateSceneImages = async (scene: Scene) => {
+      const imagePromises = scene.prompts.map((prompt) =>
+        fetch("/api/leap/generate-scene-image", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt }),
+        })
+          .then((response) => response.json())
+          .then((data) => data.imageUrl)
+      );
 
-  const imageUrls = await Promise.all(imagePromises);
-  console.log("sceneImages", imageUrls);
-  return imageUrls;
-};
-  
+      const imageUrls = await Promise.all(imagePromises);
+      console.log("sceneImages", imageUrls);
+      return imageUrls;
+    };
+
     // Check if scene is not null
     if (scene) {
-    // Create a copy of the scene
-    const updatedScene = { ...scene };
+      // Create a copy of the scene
+      const updatedScene = { ...scene };
 
-    // Generate image for each character without an imageUrl
-    const characterImagePromises = updatedScene.characters.map(character => {
-      if (!character.imageUrl) {
-        return generateCharacterImage(character).then(imageUrl => {
-          character.imageUrl = imageUrl;
-          return character;
-        });
-      }
-      return Promise.resolve(character);
-    });
-
-    // Generate image for the scene if it doesn't have an imageUrl
-    const sceneImagePromise = updatedScene.imageUrls && updatedScene.imageUrls.length > 0 ? Promise.resolve(updatedScene.imageUrls) : generateSceneImages(updatedScene);
-
-    Promise.all([...characterImagePromises, sceneImagePromise])
-      .then(results => {
-        const characters = results.slice(0, -1).flat() as Character[];
-        const sceneImageUrls = results[results.length - 1];
-
-        updatedScene.characters = characters;
-        updatedScene.imageUrls = sceneImageUrls as string[]; // Update imageUrls instead of imageUrl
-
-        // Only update the finalScene state if it has changed
-        if (JSON.stringify(generatingScene) !== JSON.stringify(updatedScene)) {
-          setGeneratingScene(updatedScene);
+      // Generate image for each character without an imageUrl
+      const characterImagePromises = updatedScene.characters.map(
+        (character) => {
+          if (!character.imageUrl) {
+            return generateCharacterImage(character).then((imageUrl) => {
+              character.imageUrl = imageUrl;
+              return character;
+            });
+          }
+          return Promise.resolve(character);
         }
-      });
-  }
+      );
+
+      // Generate image for the scene if it doesn't have an imageUrl
+      const sceneImagePromise =
+        updatedScene.imageUrls && updatedScene.imageUrls.length > 0
+          ? Promise.resolve(updatedScene.imageUrls)
+          : generateSceneImages(updatedScene);
+
+      Promise.all([...characterImagePromises, sceneImagePromise]).then(
+        (results) => {
+          const characters = results.slice(0, -1).flat() as Character[];
+          const sceneImageUrls = results[results.length - 1];
+
+          updatedScene.characters = characters;
+          updatedScene.imageUrls = sceneImageUrls as string[]; // Update imageUrls instead of imageUrl
+
+          // Only update the finalScene state if it has changed
+          if (
+            JSON.stringify(generatingScene) !== JSON.stringify(updatedScene)
+          ) {
+            setGeneratingScene(updatedScene);
+          }
+        }
+      );
+    }
   }, [scene]); // Depend on scene state
 
   useEffect(() => {
@@ -94,7 +105,7 @@ const generateSceneImages = async (scene: Scene) => {
       if (!character) {
         return;
       }
-
+      setLoadingCharacter(true);
       const response = await fetch(`${backendUrl}/generate_user_character/`, {
         method: "POST",
         headers: {
@@ -130,6 +141,7 @@ const generateSceneImages = async (scene: Scene) => {
       console.log("generatedCharacter", generatedCharacter);
 
       setGeneratedCharacter(generatedCharacter);
+      setLoadingCharacter(false);
     };
 
     generateCharacter();
@@ -153,6 +165,24 @@ const generateSceneImages = async (scene: Scene) => {
       });
     }
   }, [generatedCharacter, generatingScene]); // Depend on generatedCharacter and generatedScene states
+
+  if (loadingCharacter) {
+    return (
+      <Layout>
+        <Stack h="full">
+          <Heading>Video 2 Manga</Heading>
+          <Flex
+            w="full"
+            aspectRatio={16 / 9}
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
+            <Spinner />
+          </Flex>
+        </Stack>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
