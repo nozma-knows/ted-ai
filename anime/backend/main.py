@@ -26,6 +26,8 @@ class Narration(BaseModel):
 
 
 def narration_to_string(narration: Narration) -> str:
+    if narration is None:
+        return "Narration loading... You can start chatting without it. Use the plot context provided."
     return narration.text
 
 
