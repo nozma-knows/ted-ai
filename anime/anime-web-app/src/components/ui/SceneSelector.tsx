@@ -4,14 +4,14 @@ import { Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 
 import { motion } from "framer-motion";
 
-export interface Scene {
+export interface Video {
   title: string;
   videoId?: string;
 }
 
 interface SceneProps {
-  scene: Scene;
-  setScene: (scene: Scene) => void;
+  video: Video;
+  setVideo: (video: Video) => void;
 }
 
 const scenes = [
@@ -32,9 +32,12 @@ const scenes = [
 
 
 
-const Scene = ({ scene, setScene }: SceneProps) => {
-  const sceneClicked = async (scene: Scene) => {
-    const response = await fetch('http://localhost:8000/generate_scene/', {
+const Scene = ({ video: scene, setVideo: setScene }: SceneProps) => {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+  const sceneClicked = async (scene: Video) => {
+    console.log(scene);
+    console.log(backendUrl)
+    const response = await fetch(`${backendUrl}/generate_scene/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -46,8 +49,10 @@ const Scene = ({ scene, setScene }: SceneProps) => {
 
     const data = await response.json();
 
+    console.log(data)
+
     // Update the scene in the parent component
-    setScene(data.response);
+    setScene(scene);
   }
 
 
@@ -68,7 +73,7 @@ const Scene = ({ scene, setScene }: SceneProps) => {
 };
 
 interface Props {
-  setScene: (scene: Scene) => void;
+  setScene: (scene: Video) => void;
 }
 
 const SceneSelector: FC<Props> = ({ setScene }) => {
@@ -76,7 +81,7 @@ const SceneSelector: FC<Props> = ({ setScene }) => {
     <Flex w="full" justifyContent="center">
       <Grid templateColumns={["repeat(2, 1fr)"]} w="full" maxW={"600"} gap={4}>
         {scenes.map((scene) => {
-          return <Scene key={scene.title} scene={scene} setScene={setScene} />;
+          return <Scene key={scene.title} video={scene} setVideo={setScene} />;
         })}
       </Grid>
     </Flex>

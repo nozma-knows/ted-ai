@@ -1,12 +1,12 @@
 import { FC, FormEvent, useEffect, useState } from "react";
 import { Stack, Flex, Input, Button } from "@chakra-ui/react";
-import { Scene } from "./SceneSelector";
+import { Video } from "./SceneSelector";
 import { Character } from "./CharacterSelector";
 import { useMusicContext } from "@/context/MusicContext";
 import BackgroundMusic from "../BackgroundMusic";
 
 interface Props {
-  scene: Scene;
+  scene: Video;
   character: Character;
 }
 

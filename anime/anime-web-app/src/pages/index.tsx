@@ -2,13 +2,13 @@ import Layout from "@/components/Layout";
 import CharacterSelector, {
   Character,
 } from "@/components/ui/CharacterSelector";
-import SceneSelector, { Scene } from "@/components/ui/SceneSelector";
+import SceneSelector, { Video } from "@/components/ui/SceneSelector";
 import Story from "@/components/ui/Story";
 import { Flex, Stack, Heading, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [scene, setScene] = useState<Scene | null>(null);
+  const [scene, setScene] = useState<Video | null>(null);
   const [character, setCharacter] = useState<Character | null>(null);
 
   return (
