@@ -14,25 +14,25 @@ interface SceneProps {
   setVideo: (video: Video) => void;
 }
 
-const scenes = [
+const videos = [
   {
-    title: "Scene 1",
+    title: "Video 1",
     videoId: "652b5c1b43e8c47e4eb4829b"
   },
   {
-    title: "Scene 2",
+    title: "Video 2",
   },
   {
-    title: "Scene 3",
+    title: "Video 3",
   },
   {
-    title: "Scene 4",
+    title: "Video 4",
   },
 ];
 
 
 
-const Scene = ({ video: scene, setVideo: setScene }: SceneProps) => {
+const Video = ({ video, setVideo }: SceneProps) => {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
   const sceneClicked = async (scene: Video) => {
     console.log(scene);
@@ -52,7 +52,7 @@ const Scene = ({ video: scene, setVideo: setScene }: SceneProps) => {
     console.log(data)
 
     // Update the scene in the parent component
-    setScene(scene);
+    setVideo(scene);
   }
 
 
@@ -65,9 +65,9 @@ const Scene = ({ video: scene, setVideo: setScene }: SceneProps) => {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       cursor="pointer"
-      onClick={() => sceneClicked(scene)}
+      onClick={() => sceneClicked(video)}
     >
-      <Text>{scene.title}</Text>
+      <Text>{video.title}</Text>
     </GridItem>
   );
 };
@@ -80,8 +80,8 @@ const SceneSelector: FC<Props> = ({ setScene }) => {
   return (
     <Flex w="full" justifyContent="center">
       <Grid templateColumns={["repeat(2, 1fr)"]} w="full" maxW={"600"} gap={4}>
-        {scenes.map((scene) => {
-          return <Scene key={scene.title} video={scene} setVideo={setScene} />;
+        {videos.map((scene) => {
+          return <Video key={scene.title} video={scene} setVideo={setScene} />;
         })}
       </Grid>
     </Flex>
