@@ -24,7 +24,7 @@ const Story: FC<Props> = ({ scene, character, showInput }) => {
         Story View
       </Flex>
 
-      {showInput && (
+      {showInput ? (
         <form onSubmit={handleSubmit}>
           <Flex gap={4} alignItems="center">
             <Input
@@ -40,6 +40,8 @@ const Story: FC<Props> = ({ scene, character, showInput }) => {
             </Button>
           </Flex>
         </form>
+      ) : (
+        <Button colorScheme="teal">Next</Button>
       )}
     </Stack>
   );
