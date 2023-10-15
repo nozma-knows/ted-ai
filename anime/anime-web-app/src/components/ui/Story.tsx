@@ -18,11 +18,28 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   const [messageCount, setMessageCount] = useState<number>(0);
   const [activePanel, setActivePanel] = useState<PanelData | null>(null);
   const [nextPanel, setNextPanel] = useState<PanelData | null>(null);
+  const [nextNarrationPanel, setNextNarrationPanel] = useState<PanelData | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log("Prompt: ", prompt);
     setPrompt("");
+  };
+
+  const generateSceneImages = async (scene: Scene) => {
+    const imagePromises = scene.prompts.map(prompt =>
+      fetch('/api/leap/generate-scene-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt  }),
+      }).then(response => response.json()).then(data => data.imageUrl)
+    );
+  
+    const imageUrls = await Promise.all(imagePromises);
+    console.log("sceneImages", imageUrls);
+    return imageUrls;
   };
 
   const fetchNextPanel = async (scene: Scene): Promise<PanelData> => {
@@ -53,16 +70,18 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     const data = await response.json();
     const narration: Narration = data.response;
   
-    // If the narration's name is "Narrator", return the narration data
-      if (!scene.imageUrls) {
-        throw new Error("Scene image is not defined");
-      }
-      return {
-        imageUrl: scene.imageUrls[0],
-        characterName: "Narrator",
-        text: narration.text,
-      };
+    // Generate a new scene image
+    const newSceneImageUrls = await generateSceneImages(scene);
   
+    // If the narration's name is "Narrator", return the narration data
+    if (!scene.imageUrls) {
+      throw new Error("Scene image is not defined");
+    }
+    return {
+      imageUrl: newSceneImageUrls[0],
+      characterName: "Narrator",
+      text: narration.text,
+    };
   };
 
 // Fetch initial narration and image when component mounts
@@ -71,13 +90,22 @@ useEffect(() => {
   fetchNextPanel(scene).then(setNextPanel);
 }, [scene]);
 
-  const handleNext = () => {
-    if (nextPanel) {
-      setActivePanel(nextPanel);
-      setMessageCount(count => count + 1);
-      fetchNextPanel(scene).then(setNextPanel);
-    }
-  };
+useEffect(() => {
+  if (nextNarrationPanel === null) {
+    fetchNextNarration(scene).then(setNextNarrationPanel);
+  }
+}, [nextNarrationPanel, scene]);
+
+const handleNext = () => {
+  if (messageCount % 5 === 0 && nextNarrationPanel) {
+    setActivePanel(nextNarrationPanel);
+    setNextNarrationPanel(null); // Set nextNarrationPanel to null after displaying it
+  } else if (nextPanel) {
+    setActivePanel(nextPanel);
+  }
+  setMessageCount(count => count + 1);
+  fetchNextPanel(scene).then(setNextPanel);
+};
   const { music } = useMusicContext();
 
   return (

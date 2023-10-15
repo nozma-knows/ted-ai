@@ -38,7 +38,6 @@ export default function Home() {
     // Function to generate image for a scene
     // Function to generate image for a scene
 const generateSceneImages = async (scene: Scene) => {
-  const charString = JSON.stringify(scene.characters);
   const imagePromises = scene.prompts.map(prompt =>
     fetch('/api/leap/generate-scene-image', {
       method: 'POST',
