@@ -9,7 +9,7 @@ export interface Video {
   videoId?: string;
 }
 
-interface SceneProps {
+interface VideoProps {
   video: Video;
   setVideo: (video: Video) => void;
 }
@@ -32,7 +32,7 @@ const videos = [
 
 
 
-const Video = ({ video, setVideo }: SceneProps) => {
+const Video = ({ video, setVideo }: VideoProps) => {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
   const sceneClicked = async (scene: Video) => {
     console.log(scene);
