@@ -137,7 +137,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
 
       <Flex
         w="full"
-        h="full"
+        aspectRatio={1 / 1}
         bg="blackAlpha.400"
         rounded="md"
         position="relative"
@@ -145,7 +145,12 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
         Story View
         {activePanel && (
           <Flex>
-            <Image src={activePanel.imageUrl} alt="Active" fill />
+            <Image
+              src={activePanel.imageUrl}
+              alt="Active"
+              fill
+              className="rounded-md"
+            />
             <Flex bg="blue" w="full">
               <Flex
                 w="full"
