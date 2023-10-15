@@ -80,13 +80,13 @@ export function MusicProvider({ children }: { children?: React.ReactNode }) {
     }
   }, [music]);
 
-  if (!music) {
-    generateMusic({
-      prompt: `Create a soothing and dreamy lofi track that transports the listener to a mystical forest at twilight. The music should evoke a sense of wonder and tranquility, with subtle hints of magic and enchantment woven into the melody. Use gentle, downtempo beats, soft piano chords, and ethereal synth textures to craft a truly enchanting lofi experience.`,
-      mode: "melody",
-      duration: 20,
-    });
-  }
+  // if (!music) {
+  //   generateMusic({
+  //     prompt: `Create a soothing and dreamy lofi track that transports the listener to a mystical forest at twilight. The music should evoke a sense of wonder and tranquility, with subtle hints of magic and enchantment woven into the melody. Use gentle, downtempo beats, soft piano chords, and ethereal synth textures to craft a truly enchanting lofi experience.`,
+  //     mode: "melody",
+  //     duration: 20,
+  //   });
+  // }
 
   return (
     <MusicContext.Provider

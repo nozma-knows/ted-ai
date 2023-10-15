@@ -1,19 +1,3 @@
-// const fetch = require("node-fetch");
-
-// const url = "https://api.tryleap.ai/api/v1/music";
-// const options = {
-//   method: "GET",
-//   headers: {
-//     accept: "application/json",
-//     authorization: "Bearer 9dd95457-b0b3-4651-9bc5-8fa913a81789",
-//   },
-// };
-
-// fetch(url, options)
-//   .then((res) => res.json())
-//   .then((json) => console.log(json))
-//   .catch((err) => console.error("error:" + err));
-
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
