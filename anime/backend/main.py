@@ -72,6 +72,7 @@ scene = Scene(
 @app.get("/next_panel/")
 async def send_message():
     # Define the initial message
+    global last_narration
     initial_message = {
         "role": "system",
         "content": f"""You are generating panels for a manga! Each manga panel should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. You should send messages for different characters depending on the current action of the scene. It should unfold in an interesting and engaging way to the user. Make sure that one character doesn't speak more than 4 times in a row. There should be scenematic action unfolding in an engaging, Manga way. There's no such thing as overdramatic in Manga! Be creative and keep all the characters engaged!
@@ -130,6 +131,7 @@ Please keep your narration very short and succinct. 2-3 sentences max. Leave lot
 
 @app.get("/next_narration/")
 async def narration():
+    global last_narration
     initial_message = {
         "role": "system",
         "content": f"""You are generating narration for a manga! Each narration should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. Different characters will speak for themselves. You set the Narration of the Manga. It's your job to describe what is happening, set the scene and the plot up. You are going to generate the narration that will happen 5 messages after the current chat. It will then be up to the characters to role play the scene until your next narration, so think ahead please.
