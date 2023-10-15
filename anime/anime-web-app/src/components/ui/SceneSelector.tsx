@@ -35,10 +35,6 @@ const Scene = ({ scene, setScene }: SceneProps) => {
       bg="blackAlpha.400"
       aspectRatio={1 / 1}
       rounded="md"
-      // border="2px solid transparent"
-      // _hover={{
-      //   border: "2px solid black",
-      // }}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       cursor="pointer"
