@@ -21,7 +21,7 @@ def panel_to_string(panel: Panel) -> str:
 
 
 class Narration(BaseModel):
-    name: str = "Narrator"
+    character: str = "Narrator"
     text: str = Field(description="The narration text.")
 
 

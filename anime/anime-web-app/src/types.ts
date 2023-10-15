@@ -35,3 +35,13 @@ export interface VideoProps {
   setVideo: (video: Video) => void;
   setScene  : (scene: Scene) => void;
 }
+
+export interface Panel {
+  character: string;
+  text: string;
+}
+
+export interface Narration {
+  name: string;
+  text: string;
+}
