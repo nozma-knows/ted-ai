@@ -31,6 +31,7 @@ def narration_to_string(narration: Narration) -> str:
 
 # Initialize the chat history
 chat_history = []
+last_narration = None
 
 # Initialize the FastAPI app
 app = FastAPI()
@@ -72,6 +73,10 @@ async def send_message():
         "role": "system",
         "content": f"""You are generating panels for a manga! Each manga panel should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. You should send messages for different characters depending on the current action of the scene. It should unfold in an interesting and engaging way to the user. Make sure that one character doesn't speak more than 4 times in a row. There should be scenematic action unfolding in an engaging, Manga way. There's no such thing as overdramatic in Manga! Be creative and keep all the characters engaged!
 
+There will be a narrator that speaks in between the panels, so you don't need to describe the scene in detail. Just focus on the characters and their actions. The narrator will describe the scene in between the panels. The narrator will send a message every 5 messages. It is up to you to determine how the characters get from "Point A to Point B". Make sure that your panels are engaging and interesting, and that the characters are acting in a way that makes sense for the scene.
+
+The next narration is: {narration_to_string(last_narration)}
+
 We have generated drawings for the characters, so it is very important that you may not invent new characters, use only the characters listed, with the names written exactly how they are listed.
 """,
     }
@@ -93,7 +98,7 @@ We have generated drawings for the characters, so it is very important that you 
     return {"response": model}
 
 
-@app.get("/next_narration/")
+@app.get("/first_narration/")
 async def narration():
     initial_message = {
         "role": "system",
@@ -117,6 +122,38 @@ Please keep your narration very short and succinct. 2-3 sentences max. Leave lot
     # Append the new panel to the chat history
     new_message = {"role": "assistant", "content": narration_to_string(model)}
     chat_history.append(new_message)
+
+    return {"response": model}
+
+
+@app.get("/next_narration/")
+async def narration():
+    initial_message = {
+        "role": "system",
+        "content": f"""You are generating narration for a manga! Each narration should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. Different characters will speak for themselves. You set the Narration of the Manga. It's your job to describe what is happening, set the scene and the plot up. You are going to generate the narration that will happen 5 messages after the current chat. It will then be up to the characters to role play the scene until your next narration, so think ahead please.
+
+Please keep your narration very short and succinct. 2-3 sentences max. Leave lots of room for the characters to speak, and focus on describing things other than what the characters are saying.
+""",
+    }
+    # Define the scene message
+    scene_message = {"role": "user", "content": scene_to_text(scene)}
+
+    # Initialize the messages list
+    messages = [initial_message, scene_message] + chat_history
+
+    # Generate a new panel
+    response = openai.ChatCompletion().create(
+        messages=messages, response_model=Narration
+    )
+    model = response.to_model()
+
+    if last_narration is not None:
+        new_message = {
+            "role": "assistant",
+            "content": narration_to_string(last_narration),
+        }
+        chat_history.append(new_message)
+        last_narration = model
 
     return {"response": model}
 

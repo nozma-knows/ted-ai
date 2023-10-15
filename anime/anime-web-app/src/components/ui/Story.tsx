@@ -84,9 +84,28 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     };
   };
 
+  const fetchInitialNarration = async (scene: Scene): Promise<PanelData> => {
+    const response = await fetch(`${backendUrl}/first_narration/`);
+    const data = await response.json();
+    const narration: Narration = data.response;
+  
+    // Generate a new scene image
+    const newSceneImageUrls = await generateSceneImages(scene);
+  
+    // If the narration's name is "Narrator", return the narration data
+    if (!scene.imageUrls) {
+      throw new Error("Scene image is not defined");
+    }
+    return {
+      imageUrl: newSceneImageUrls[0],
+      characterName: "Narrator",
+      text: narration.text,
+    };
+  };
+
 // Fetch initial narration and image when component mounts
 useEffect(() => {
-  fetchNextNarration(scene).then(setActivePanel);
+  fetchInitialNarration(scene).then(setActivePanel);
   fetchNextPanel(scene).then(setNextPanel);
 }, [scene]);
 
