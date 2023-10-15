@@ -22,10 +22,6 @@ const Story: FC<Props> = ({ scene, character }) => {
 
   const { music } = useMusicContext();
 
-  useEffect(() => {
-    console.log("music: ", music);
-  }, [music]);
-
   return (
     <Stack w="full" h="full" maxW={"900"}>
       {music && music.media_uri && <BackgroundMusic src={music.media_uri} />}
