@@ -176,7 +176,7 @@ export default function Home() {
             </Stack>
           )}
           {/* Diplay Story */}
-          {video && character && <Story video={video} character={character} scene={generatingScene} />}
+          {video && character && finalScene && <Story video={video} character={character} scene={finalScene} />}
         </Flex>
       </Stack>
     </Layout>

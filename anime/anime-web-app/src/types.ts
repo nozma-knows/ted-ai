@@ -13,7 +13,7 @@ export interface Character {
 export interface StoryProps {
   video: Video;
   character: CharacterProps;
-  scene: Scene | null;
+  scene: Scene;
 }
 
 export interface Scene {
