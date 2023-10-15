@@ -232,31 +232,10 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
         )}
       </Flex>
 
-      {showInput ? (
-        <form onSubmit={handleSubmit}>
-          <Flex gap={4} alignItems="center">
-            <Input
-              type="text"
-              id="prompt"
-              name="prompt"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Enter a prompt"
-            />
-            <Button
-              onClick={handleNext}
-              colorScheme="teal"
-              isDisabled={isPanelLoading}
-            >
-              Next
-            </Button>
-          </Flex>
-        </form>
-      ) : (
-        <Button onClick={handleNext} colorScheme="teal">
+
+        <Button onClick={handleNext}  colorScheme="teal" isDisabled={isPanelLoading}>
           Next
         </Button>
-      )}
     </Stack>
   );
 };
