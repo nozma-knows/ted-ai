@@ -3,7 +3,7 @@ from typing import Dict, List
 from summary_get import Character, vid2scene, Scene
 from marvin import openai
 from pydantic import BaseModel, Field
-from demo_scene import scene_text
+from demo_scene import scene_to_text, scene
 
 
 # Define the Panel model
@@ -36,7 +36,7 @@ async def send_message():
     }
 
     # Define the scene message
-    scene_message = {"role": "user", "content": scene_text}
+    scene_message = {"role": "user", "content": scene_to_text(scene)}
 
     # Initialize the messages list
     messages = [initial_message, scene_message] + chat_history
@@ -84,6 +84,9 @@ async def generate_user_character(user_input: UserInput):
         messages=messages, response_model=Character
     )
     model = response.to_model()
+
+    # Append the generated character to the scene's characters list
+    scene.characters.append(model)
 
     return {"response": model}
 
