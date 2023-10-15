@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   Stack,
   FormControl,
@@ -23,6 +23,7 @@ const CharacterSelector: FC<Props> = ({ setCharacter }) => {
   function handleSubmit() {
     setCharacter(formData);
   }
+
 
   return (
     <Stack>
