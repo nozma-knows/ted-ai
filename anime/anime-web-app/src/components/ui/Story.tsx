@@ -52,10 +52,10 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     const response = await fetch(`${backendUrl}/next_panel/`);
     const data = await response.json();
     const panel: Panel = data.response;
-  
+
     // Find the character in the scene with the same name as the panel's character
     const character = scene.characters.find((c) => c.name === panel.character);
-  
+
     // If the character is found, return the panel data
     if (character) {
       if (!character.imageUrl) {
@@ -67,12 +67,12 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
         text: panel.text,
       };
     }
-  
+
     // If the character is not found, call mapCharacterIntoScene
-    const mapCharacterResponse = await fetch('/api/mapCharacterIntoScene', {
-      method: 'POST',
+    const mapCharacterResponse = await fetch("/api/mapCharacterIntoScene", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ character: panel.character, scene }),
     });
@@ -82,17 +82,16 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     const newChar = scene.characters.find((c) => c.name === panel.character);
     setIsPanelLoading(false);
     if (!newChar?.imageUrl) {
-
       // pick a random character if all else fails
-      const randomCharacter = scene.characters[Math.floor(Math.random() * scene.characters.length)];
+      const randomCharacter =
+        scene.characters[Math.floor(Math.random() * scene.characters.length)];
       return {
         imageUrl: randomCharacter.imageUrl!,
         characterName: randomCharacter.name,
         text: panel.text,
-      }
-      
+      };
     }
-  
+
     return {
       imageUrl: newChar?.imageUrl!, // You might want to generate an image for this character
       characterName: characterName,
@@ -163,26 +162,19 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   const { music } = useMusicContext();
 
   return (
-    <Stack w="full" h="full" maxW={"900"}>
+    <Stack w="full" h="full" maxW={"600"}>
       {music && music.media_uri && <BackgroundMusic src={music.media_uri} />}
 
-      <Flex
-        w="full"
-        aspectRatio={1 / 1}
-        bg="blackAlpha.400"
-        rounded="md"
-        position="relative"
-      >
-        Story View
+      <Flex w="full" h="full" bg="blackAlpha.400" rounded="md">
         {activePanel && (
-          <Flex>
+          <Flex w="full" position="relative" aspectRatio={1 / 1}>
             <Image
               src={activePanel.imageUrl}
               alt="Active"
               fill
-              className="rounded-md"
+              className="rounded-md aspect-square"
             />
-            <Flex bg="blue" w="full">
+            <Flex w="full">
               <Flex
                 w="full"
                 position="absolute"
@@ -215,7 +207,11 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Enter a prompt"
             />
-           <Button onClick={handleNext} colorScheme="teal" isDisabled={isPanelLoading}>
+            <Button
+              onClick={handleNext}
+              colorScheme="teal"
+              isDisabled={isPanelLoading}
+            >
               Next
             </Button>
           </Flex>
