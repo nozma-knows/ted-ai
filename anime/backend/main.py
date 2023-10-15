@@ -101,11 +101,13 @@ The character name must be one of the listed characters for the scene, type exac
     return {"response": model}
 
 
-@app.get("/first_narration/")
+@app.get("/next_narration/")
 async def narration():
     initial_message = {
         "role": "system",
         "content": f"""You are generating narration for a manga! Each narration should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. Different characters will speak for themselves. You set the Narration of the Manga. It's your job to describe what is happening, set the scene and the plot up. 
+
+    Please keep the plot moving along. You are like a dungeon master in DnD, you need to throw new and interesting situations at the characters!
 
 Please keep your narration very short and succinct. 2-3 sentences max. Leave lots of room for the characters to speak, and focus on describing things other than what the characters are saying.
 """,

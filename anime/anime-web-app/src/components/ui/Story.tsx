@@ -100,8 +100,8 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   };
 
 
-  const fetchInitialNarration = useCallback(async (scene: Scene): Promise<PanelData> => {
-    const response = await fetch(`${backendUrl}/first_narration/`);
+  const fetchNextNarration = useCallback(async (scene: Scene): Promise<PanelData> => {
+    const response = await fetch(`${backendUrl}/next_narration/`);
     const data = await response.json();
     const narration: Narration = data.response;
 
@@ -124,18 +124,22 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   const handleNext = useCallback(async () => {
     // If it's the start of the scene, fetch the initial narration
     if (messageCount === 0) {
-      const initialNarration = await fetchInitialNarration(scene);
+      const initialNarration = await fetchNextNarration(scene);
       setActivePanel(initialNarration);
       const nextPanelData = await fetchNextPanel(scene);
       setNextPanel(nextPanelData);
     } else if (messageCount % 5 === 0 && messageCount !== 0) {
       // If it's time for a narration, display the next narration
-      if (!nextPanel) {
-      // Pre-fetch the next panel
+      const nextNarration = await fetchNextNarration(scene);
+      setActivePanel(nextNarration);
       const nextPanelData = await fetchNextPanel(scene);
       setNextPanel(nextPanelData);
-      }
-    } else {
+      
+    }
+    else if (messageCount % 5 === 1 ) {
+      setActivePanel(nextPanel);
+    }
+    else {
       // If it's time for a panel, display the next panel
       if (nextPanel) {
         setActivePanel(nextPanel);
@@ -151,7 +155,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     }
   
     setMessageCount((count) => count + 1);
-  }, [fetchInitialNarration, messageCount, nextPanel, scene]);
+  }, [fetchNextNarration, messageCount, nextPanel, scene]);
 
   useEffect(() => {
     if (messageCount === 0) {
