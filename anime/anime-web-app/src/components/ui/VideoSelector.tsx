@@ -31,40 +31,66 @@ const Video = ({ video, setVideo, setScene }: VideoProps) => {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const videoClicked = async (video: Video) => {
     console.log(video);
-    console.log(backendUrl)
-    const response = await fetch(`${backendUrl}/generate_scene/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        video_id: video.videoId,
-      }),
-    });
+    console.log(backendUrl);
+    // const response = await fetch(`${backendUrl}/generate_scene/`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     video_id: video.videoId,
+    //   }),
+    // });
 
-    const data = await response.json();
-  //   const data = {
-  //     "response": {
-  //         "name": "Rockets' Ascend",
-  //         "imagery": "The scene unfolds at a vast rocket launch site, with a crowd gathered in anticipation. The sky is clear, with the sun glistening in the backdrop, creating a dramatic contrast with the towering rockets ready for lift-off. Television screens and livestreams across the globe echo the excitement and tension.",
-  //         "music": "The music is an orchestra of anticipation and adventure, mixing the sounds of escalating violins and drums with the occasional crescendos of horns to highlight the rockets' ascend.",
-  //         "plot": "In a futuristic world, where space exploration has become a spectator sport, different factions compete in launching rockets, the most prominent being SpaceX with their Starship and Falcon 9. Each launch is a high-stakes game, with not just the teams but the whole world watching. The story revolves around these launches, the rivalries, the triumphs and the failures, and the dreams of reaching the stars.",
-  //         "characters": [
-  //             {
-  //                 "name": "Captain Blast",
-  //                 "description": "A veteran astronaut and the charismatic leader of the SpaceX team.",
-  //                 "imagery": "Donning a sleek silver flight suit with the SpaceX logo, he embodies ambition and courage.",
-  //                 "personality": "Determined, charismatic, and always eager to push the boundaries of space exploration."
-  //             },
-  //             {
-  //                 "name": "Nova",
-  //                 "description": "A young genius engineer responsible for designing the rockets.",
-  //                 "imagery": "With her blueprint-covered overalls and ever-present clipboard, she's the brain behind the rockets.",
-  //                 "personality": "Intelligent, meticulous, and passionate about her creations reaching the stars."
-  //             }
-  //         ]
-  //     }
-  // }
+    // const data = await response.json();
+    const data = {
+      response: {
+        name: "Astro Ascend",
+        imagery:
+          "A breathtaking anime scene where various rockets ascend into the infinite sky, showcasing their magnificent stage separations and their successful triumphant landings back on Earth. The ground is swarmed with enthusiastic crowds, their eyes gleaming with wonder as they witness these historic moments.",
+        music:
+          "A powerful orchestral score swelling with hope and ambition, punctuated by the thrilling sounds of rocket engines roaring to life, and the crowd's cheers echoing across the launch site.",
+        plot: "In a world where space exploration is the pinnacle of human achievement, various organizations compete in launching rockets into the cosmos, each aiming to reach the next frontier. A young and passionate team from a company called 'StarPath' emerges as the underdog in this cutthroat competition. They face numerous challenges, technical intricacies, and intense rivalries. Each launch signifies a step forward in their journey, carving their names in space exploration history. The story progresses with each launch, with suspenseful stage separations, and the nail-biting anticipation of successful landings.",
+        characters: [
+          {
+            name: "Captain Orion",
+            description:
+              "The leader of the StarPath team, a veteran astronaut with a dream to push humanity's boundaries.",
+            imagery:
+              "A sturdy figure, with stars sparkling in his eyes and an aura of determination surrounding him.",
+            personality:
+              "Bold, visionary, and always willing to take risks for the sake of exploration.",
+            imageUrl:
+              "https://static.tryleap.ai/image-gen-qow4uwdbdiwnlvjmtol4h3o3oy/generated_images/f540261f-7487-4a85-b7ef-3280aca6aa32-0.png",
+          },
+          {
+            name: "Nova",
+            description:
+              "A young rocket engineer, whose innovative designs are crucial for StarPath's success.",
+            imagery:
+              "A brilliant woman with a perpetual twinkle of genius in her eyes and blueprint sketches always at hand.",
+            personality:
+              "Intelligent, curious, and dedicated to her dream of reaching the stars.",
+            imageUrl:
+              "https://static.tryleap.ai/image-gen-g7ubgylb3r7pikqimuzyj6a2aq/generated_images/37100d2b-c55f-4fed-a911-683404b7b427-0.png",
+          },
+          {
+            name: "Galaxy",
+            description:
+              "The enthusiastic head of public relations, responsible for rallying support for StarPath's ventures.",
+            imagery:
+              "An outgoing and charismatic figure, always in the midst of the crowd, sharing the StarPath dream with the world.",
+            personality:
+              "Charismatic, passionate, with an unyielding belief in the vision of space exploration.",
+            imageUrl:
+              "https://static.tryleap.ai/image-gen-yopedxtbqrshld4aalagpci5ue/generated_images/66f0ea36-e72a-4e15-adb6-7577252f6816-0.png",
+          },
+        ],
+        prompts: [
+          "The scene opens with the vast expanse of an arid desert landscape, bathed in the soft golden hues of the early morning sun. In the midst of nothingness, a towering rocket stands tall, emblazoned with the bold logo of 'StarPath', as scientists and engineers scurry about, making the final preparations for launch.",
+        ],
+      },
+    };
 
     console.log(data);
 
