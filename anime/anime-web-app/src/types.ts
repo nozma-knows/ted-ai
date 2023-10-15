@@ -8,8 +8,8 @@ export interface Character {
   description: string;
   imagery: string;
   personality: string;
+  imageUrl?: string;
 }
-
 export interface StoryProps {
   video: Video;
   character: CharacterProps;

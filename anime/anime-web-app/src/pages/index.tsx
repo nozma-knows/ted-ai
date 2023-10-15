@@ -4,7 +4,7 @@ import VideoSelector from "@/components/ui/VideoSelector";
 import Story from "@/components/ui/Story";
 import { Flex, Stack, Heading, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { CharacterProps, Scene, Video } from "@/types";
+import { Character, CharacterProps, Scene, Video } from "@/types";
 import CharacterSelector from "@/components/ui/CharacterSelector";
 
 export default function Home() {
@@ -12,6 +12,49 @@ export default function Home() {
   const [character, setCharacter] = useState<CharacterProps | null>(null);
   const [scene, setScene] = useState<Scene | null>(null);
 
+  // Inside your component
+  useEffect(() => {
+    // Function to generate image for a character
+    const generateImage = async (character: Character) => {
+      const response = await fetch('/api/leap/generate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+           character, // Assuming the character's name is used as the prompt
+        }),
+      });
+  
+      const data = await response.json();
+  
+      // Assuming the image URL is returned in the `data.imageUrl` field
+      return data.imageUrl;
+    };
+
+    // Check if scene is not null and if any character doesn't have an imageUrl
+    if (scene && scene.characters.some(character => !character.imageUrl)) {
+      // Create a copy of the scene
+      const updatedScene = { ...scene };
+
+      // Generate image for each character without an imageUrl
+      Promise.all(
+        updatedScene.characters.map(async character => {
+          if (!character.imageUrl) {
+            character.imageUrl = await generateImage(character);
+          }
+          return character;
+        })
+      ).then(characters => {
+        updatedScene.characters = characters;
+        // Update the scene state
+        setScene(updatedScene);
+      });
+
+      // Update the scene state
+      setScene(updatedScene);
+    }
+  }, [scene]); // Depend on scene state
 
   return (
     <Layout>
