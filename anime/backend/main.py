@@ -20,6 +20,15 @@ def panel_to_string(panel: Panel) -> str:
     return f"{panel.character}: {panel.text}"
 
 
+class Narration(BaseModel):
+    name: str = "Narrator"
+    text: str = Field(description="The narration text.")
+
+
+def narration_to_string(narration: Narration) -> str:
+    return narration.text
+
+
 # Initialize the chat history
 chat_history = []
 
@@ -33,30 +42,6 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
-
-# Initialize the scene
-# scene = {
-#     "response": {
-#         "name": "Rockets' Ascend",
-#         "imagery": "The scene unfolds at a vast rocket launch site, with a crowd gathered in anticipation. The sky is clear, with the sun glistening in the backdrop, creating a dramatic contrast with the towering rockets ready for lift-off. Television screens and livestreams across the globe echo the excitement and tension.",
-#         "music": "The music is an orchestra of anticipation and adventure, mixing the sounds of escalating violins and drums with the occasional crescendos of horns to highlight the rockets' ascend.",
-#         "plot": "In a futuristic world, where space exploration has become a spectator sport, different factions compete in launching rockets, the most prominent being SpaceX with their Starship and Falcon 9. Each launch is a high-stakes game, with not just the teams but the whole world watching. The story revolves around these launches, the rivalries, the triumphs and the failures, and the dreams of reaching the stars.",
-#         "characters": [
-#             {
-#                 "name": "Captain Blast",
-#                 "description": "A veteran astronaut and the charismatic leader of the SpaceX team.",
-#                 "imagery": "Donning a sleek silver flight suit with the SpaceX logo, he embodies ambition and courage.",
-#                 "personality": "Determined, charismatic, and always eager to push the boundaries of space exploration."
-#             },
-#             {
-#                 "name": "Nova",
-#                 "description": "A young genius engineer responsible for designing the rockets.",
-#                 "imagery": "With her blueprint-covered overalls and ever-present clipboard, she's the brain behind the rockets.",
-#                 "personality": "Intelligent, meticulous, and passionate about her creations reaching the stars."
-#             }
-#         ]
-#     }
-# }
 
 scene = Scene(
     name="Rockets' Ascend",
@@ -103,6 +88,34 @@ We have generated drawings for the characters, so it is very important that you 
 
     # Append the new panel to the chat history
     new_message = {"role": "assistant", "content": panel_to_string(model)}
+    chat_history.append(new_message)
+
+    return {"response": model}
+
+
+@app.get("/next_narration/")
+async def narration():
+    initial_message = {
+        "role": "system",
+        "content": f"""You are generating narration for a manga! Each narration should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. Different characters will speak for themselves. You set the Narration of the Manga. It's your job to describe what is happening, set the scene and the plot up. 
+
+Please keep your narration very short and succinct. 2-3 sentences max. Leave lots of room for the characters to speak, and focus on describing things other than what the characters are saying.
+""",
+    }
+    # Define the scene message
+    scene_message = {"role": "user", "content": scene_to_text(scene)}
+
+    # Initialize the messages list
+    messages = [initial_message, scene_message] + chat_history
+
+    # Generate a new panel
+    response = openai.ChatCompletion().create(
+        messages=messages, response_model=Narration
+    )
+    model = response.to_model()
+
+    # Append the new panel to the chat history
+    new_message = {"role": "assistant", "content": narration_to_string(model)}
     chat_history.append(new_message)
 
     return {"response": model}
