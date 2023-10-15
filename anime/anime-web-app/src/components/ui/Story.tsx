@@ -1,5 +1,5 @@
 import { FC, FormEvent, useEffect, useState } from "react";
-import { Stack, Flex, Input, Button, Text } from "@chakra-ui/react";
+import { Stack, Flex, Input, Button, Text, Spinner } from "@chakra-ui/react";
 import { useMusicContext } from "@/context/MusicContext";
 import BackgroundMusic from "../BackgroundMusic";
 import { Narration, Panel, Scene, StoryProps } from "@/types";
@@ -165,14 +165,15 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     <Stack w="full" h="full" maxW={"600"}>
       {music && music.media_uri && <BackgroundMusic src={music.media_uri} />}
 
-      <Flex w="full" h="full" bg="blackAlpha.400" rounded="md">
-        {activePanel && (
+      <Flex w="full" h="full" rounded="md">
+        {activePanel ? (
           <Flex w="full" position="relative" aspectRatio={1 / 1}>
             <Image
               src={activePanel.imageUrl}
               alt="Active"
               fill
               className="rounded-md aspect-square"
+              priority
             />
             <Flex w="full">
               <Flex
@@ -192,6 +193,15 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
                 </Stack>
               </Flex>
             </Flex>
+          </Flex>
+        ) : (
+          <Flex
+            w="full"
+            aspectRatio={1}
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
+            <Spinner />
           </Flex>
         )}
       </Flex>
