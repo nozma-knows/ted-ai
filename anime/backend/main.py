@@ -29,7 +29,7 @@ def narration_to_string(narration: Narration) -> str:
     if narration is None:
         return ""
 
-    return f"The current goal of the scene is to {narration.text}. The characters conversation will guide them to {narration.text}."
+    return f"Narrator: {narration.text}"
 
 
 # Initialize the chat history
@@ -75,10 +75,10 @@ async def send_message():
     global last_narration
     initial_message = {
         "role": "system",
-        "content": f"""You are generating panels for a manga! Each manga panel should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. You should send messages for different characters depending on the current action of the scene. It should unfold in an interesting and engaging way to the user. Make sure that one character doesn't speak more than 4 times in a row. There should be scenematic action unfolding in an engaging, Manga way. There's no such thing as overdramatic in Manga! Be creative and keep all the characters engaged!
+        "content": f"""You are generating panels for a manga! Each manga panel should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. You should send messages for different characters depending on the current action of the scene. It should unfold in an interesting and engaging way to the user. Make sure that one character doesn't speak more than 4 times in a row. There should be scenematic action unfolding in an engaging, Manga way. There's no such thing as overdramatic in Manga! Be creative and keep all the characters engaged! The story should continue to unfold in an interesting way.
 
-{narration_to_string(last_narration)}
-        
+You do not do the narration, the narration is done by someone else, only reply as one of the characters.
+
 We have generated drawings for the characters, so it is very important that you may not invent new characters, use only the characters listed, with the names written exactly how they are listed.
 The character name must be one of the listed characters for the scene, type exactly as it appears in the scene description.
 """,
@@ -125,39 +125,6 @@ Please keep your narration very short and succinct. 2-3 sentences max. Leave lot
     # Append the new panel to the chat history
     new_message = {"role": "assistant", "content": narration_to_string(model)}
     chat_history.append(new_message)
-
-    return {"response": model}
-
-
-@app.get("/next_narration/")
-async def narration():
-    global last_narration
-    initial_message = {
-        "role": "system",
-        "content": f"""You are generating narration for a manga! Each narration should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. Different characters will speak for themselves. You set the Narration of the Manga. It's your job to describe what is happening, set the scene and the plot up. You are going to generate the narration that will happen 5 messages after the current chat. It will then be up to the characters to role play the scene until your next narration, so think ahead please.
-
-Please keep your narration very short and succinct. 2-3 sentences max. Leave lots of room for the characters to speak, and focus on describing things other than what the characters are saying.
-""",
-    }
-    # Define the scene message
-    scene_message = {"role": "user", "content": scene_to_text(scene)}
-
-    # Initialize the messages list
-    messages = [initial_message, scene_message] + chat_history
-
-    # Generate a new panel
-    response = openai.ChatCompletion().create(
-        messages=messages, response_model=Narration
-    )
-    model = response.to_model()
-
-    if last_narration is not None:
-        new_message = {
-            "role": "assistant",
-            "content": narration_to_string(last_narration),
-        }
-        chat_history.append(new_message)
-        last_narration = model
 
     return {"response": model}
 

@@ -19,8 +19,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   const [messageCount, setMessageCount] = useState<number>(0);
   const [activePanel, setActivePanel] = useState<PanelData | null>(null);
   const [nextPanel, setNextPanel] = useState<PanelData | null>(null);
-  const [nextNarrationPanel, setNextNarrationPanel] =
-    useState<PanelData | null>(null);
+
 
   const [isPanelLoading, setIsPanelLoading] = useState<boolean>(false);
   const handleSubmit = (e: FormEvent) => {
@@ -100,24 +99,6 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     };
   };
 
-  const fetchNextNarration = useCallback(async (scene: Scene): Promise<PanelData> => {
-    const response = await fetch(`${backendUrl}/next_narration/`);
-    const data = await response.json();
-    const narration: Narration = data.response;
-
-    // Generate a new scene image
-    const newSceneImageUrls = await generateSceneImages(scene);
-
-    // If the narration's name is "Narrator", return the narration data
-    if (!scene.imageUrls) {
-      throw new Error("Scene image is not defined");
-    }
-    return {
-      imageUrl: newSceneImageUrls[0],
-      characterName: "Narrator",
-      text: narration.text,
-    };
-  }, []);
 
   const fetchInitialNarration = useCallback(async (scene: Scene): Promise<PanelData> => {
     const response = await fetch(`${backendUrl}/first_narration/`);
@@ -140,7 +121,6 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
 
 
 
-
   const handleNext = useCallback(async () => {
     // If it's the start of the scene, fetch the initial narration
     if (messageCount === 0) {
@@ -148,19 +128,8 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
       setActivePanel(initialNarration);
       const nextPanelData = await fetchNextPanel(scene);
       setNextPanel(nextPanelData);
-      const nextNarration = await fetchNextNarration(scene);
-      setNextNarrationPanel(nextNarration);
     } else if (messageCount % 5 === 0 && messageCount !== 0) {
       // If it's time for a narration, display the next narration
-      if (nextNarrationPanel) {
-        setActivePanel(nextNarrationPanel);
-        setNextNarrationPanel(null);
-        const nextNarration = await fetchNextNarration(scene);
-        setNextNarrationPanel(nextNarration);
-      } else {
-        const nextNarration = await fetchNextNarration(scene);
-        setActivePanel(nextNarration);
-      }
       if (!nextPanel) {
       // Pre-fetch the next panel
       const nextPanelData = await fetchNextPanel(scene);
@@ -182,7 +151,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     }
   
     setMessageCount((count) => count + 1);
-  }, [fetchInitialNarration, messageCount, fetchNextNarration, nextNarrationPanel, nextPanel, scene]);
+  }, [fetchInitialNarration, messageCount, nextPanel, scene]);
 
   useEffect(() => {
     if (messageCount === 0) {
