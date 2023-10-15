@@ -29,8 +29,8 @@ const videos = [
   },
   {
     title: "Anakin vs Obiwan",
-    imageUrl: "https://github.com/nozma-knows/ted-ai/assets/42284494/9737bcd0-1023-429b-ab2e-f2df41e6e9e7"
-
+    imageUrl: "https://github.com/nozma-knows/ted-ai/assets/42284494/9737bcd0-1023-429b-ab2e-f2df41e6e9e7",
+    videoId: "652c1e3f43e8c47e4eb483ee"
     
   },
 ];
