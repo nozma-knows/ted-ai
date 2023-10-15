@@ -3,6 +3,7 @@ import CharacterSelector, {
   Character,
 } from "@/components/ui/CharacterSelector";
 import SceneSelector, { Scene } from "@/components/ui/SceneSelector";
+import Story from "@/components/ui/Story";
 import { Flex, Stack, Heading, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
@@ -10,14 +11,11 @@ export default function Home() {
   const [scene, setScene] = useState<Scene | null>(null);
   const [character, setCharacter] = useState<Character | null>(null);
 
-  useEffect(() => {
-    console.log("Character: ", character);
-  }, [character]);
   return (
     <Layout>
-      <Stack>
+      <Stack h="full">
         <Heading>Anime Anything</Heading>
-        <Flex w="full" justifyContent="center">
+        <Flex w="full" h="full" justifyContent="center">
           {/* Display Scene Selector */}
           {!scene && (
             <Stack w="full" maxW="600">
@@ -37,12 +35,7 @@ export default function Home() {
             </Stack>
           )}
           {/* Diplay Story */}
-          {scene && character && (
-            <Stack>
-              <Text>{`Selected schene: ${scene.title}`}</Text>
-              <Text>{`Selected character: ${character.name}`}</Text>
-            </Stack>
-          )}
+          {scene && character && <Story scene={scene} character={character} />}
         </Flex>
       </Stack>
     </Layout>
