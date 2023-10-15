@@ -35,7 +35,9 @@ export default function Home() {
             </Stack>
           )}
           {/* Diplay Story */}
-          {scene && character && <Story scene={scene} character={character} />}
+          {scene && character && (
+            <Story scene={scene} character={character} showInput={false} />
+          )}
         </Flex>
       </Stack>
     </Layout>
