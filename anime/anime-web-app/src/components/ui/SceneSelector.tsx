@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 
 export interface Scene {
   title: string;
+  videoId?: string;
 }
 
 interface SceneProps {
@@ -16,6 +17,7 @@ interface SceneProps {
 const scenes = [
   {
     title: "Scene 1",
+    videoId: "652b5c1b43e8c47e4eb4829b"
   },
   {
     title: "Scene 2",
@@ -28,7 +30,27 @@ const scenes = [
   },
 ];
 
+
+
 const Scene = ({ scene, setScene }: SceneProps) => {
+  const sceneClicked = async (scene: Scene) => {
+    const response = await fetch('http://localhost:8000/generate_scene/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        video_id: scene.videoId,
+      }),
+    });
+
+    const data = await response.json();
+
+    // Update the scene in the parent component
+    setScene(data.response);
+  }
+
+
   return (
     <GridItem
       as={motion.div}
@@ -42,7 +64,7 @@ const Scene = ({ scene, setScene }: SceneProps) => {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       cursor="pointer"
-      onClick={() => setScene(scene)}
+      onClick={() => sceneClicked(scene)}
     >
       <Text>{scene.title}</Text>
     </GridItem>

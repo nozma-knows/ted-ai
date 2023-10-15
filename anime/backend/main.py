@@ -26,7 +26,49 @@ chat_history = []
 app = FastAPI()
 
 # Initialize the scene
-scene = None
+# scene = {
+#     "response": {
+#         "name": "Rockets' Ascend",
+#         "imagery": "The scene unfolds at a vast rocket launch site, with a crowd gathered in anticipation. The sky is clear, with the sun glistening in the backdrop, creating a dramatic contrast with the towering rockets ready for lift-off. Television screens and livestreams across the globe echo the excitement and tension.",
+#         "music": "The music is an orchestra of anticipation and adventure, mixing the sounds of escalating violins and drums with the occasional crescendos of horns to highlight the rockets' ascend.",
+#         "plot": "In a futuristic world, where space exploration has become a spectator sport, different factions compete in launching rockets, the most prominent being SpaceX with their Starship and Falcon 9. Each launch is a high-stakes game, with not just the teams but the whole world watching. The story revolves around these launches, the rivalries, the triumphs and the failures, and the dreams of reaching the stars.",
+#         "characters": [
+#             {
+#                 "name": "Captain Blast",
+#                 "description": "A veteran astronaut and the charismatic leader of the SpaceX team.",
+#                 "imagery": "Donning a sleek silver flight suit with the SpaceX logo, he embodies ambition and courage.",
+#                 "personality": "Determined, charismatic, and always eager to push the boundaries of space exploration."
+#             },
+#             {
+#                 "name": "Nova",
+#                 "description": "A young genius engineer responsible for designing the rockets.",
+#                 "imagery": "With her blueprint-covered overalls and ever-present clipboard, she's the brain behind the rockets.",
+#                 "personality": "Intelligent, meticulous, and passionate about her creations reaching the stars."
+#             }
+#         ]
+#     }
+# }
+
+scene = Scene(
+    name="Rockets' Ascend",
+    imagery="The scene unfolds at a vast rocket launch site, with a crowd gathered in anticipation. The sky is clear, with the sun glistening in the backdrop, creating a dramatic contrast with the towering rockets ready for lift-off. Television screens and livestreams across the globe echo the excitement and tension.",
+    music="The music is an orchestra of anticipation and adventure, mixing the sounds of escalating violins and drums with the occasional crescendos of horns to highlight the rockets' ascend.",
+    plot="In a futuristic world, where space exploration has become a spectator sport, different factions compete in launching rockets, the most prominent being SpaceX with their Starship and Falcon 9. Each launch is a high-stakes game, with not just the teams but the whole world watching. The story revolves around these launches, the rivalries, the triumphs and the failures, and the dreams of reaching the stars.",
+    characters=[
+        Character(
+            name="Captain Blast",
+            description="A veteran astronaut and the charismatic leader of the SpaceX team.",
+            imagery="Donning a sleek silver flight suit with the SpaceX logo, he embodies ambition and courage.",
+            personality="Determined, charismatic, and always eager to push the boundaries of space exploration.",
+        ),
+        Character(
+            name="Nova",
+            description="A young genius engineer responsible for designing the rockets.",
+            imagery="With her blueprint-covered overalls and ever-present clipboard, she's the brain behind the rockets.",
+            personality="Intelligent, meticulous, and passionate about her creations reaching the stars.",
+        ),
+    ],
+)
 
 
 @app.get("/next_panel/")
@@ -35,6 +77,8 @@ async def send_message():
     initial_message = {
         "role": "system",
         "content": f"""You are generating panels for a manga! Each manga panel should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. You should send messages for different characters depending on the current action of the scene. It should unfold in an interesting and engaging way to the user. Make sure that one character doesn't speak more than 4 times in a row. There should be scenematic action unfolding in an engaging, Manga way. There's no such thing as overdramatic in Manga! Be creative and keep all the characters engaged!
+
+We have generated drawings for the characters, so it is very important that you may not invent new characters, use only the characters listed, with the names written exactly how they are listed.
 """,
     }
 
