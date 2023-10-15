@@ -46,7 +46,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     return imageUrls;
   };
 
-  const fetchNextPanel = async (scene: Scene): Promise<PanelData> => {
+  const fetchNextPanel = useCallback(async (scene: Scene): Promise<PanelData> => {
     setIsPanelLoading(true);
     const response = await fetch(`${backendUrl}/next_panel/`);
     const data = await response.json();
@@ -97,10 +97,11 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
       characterName: characterName,
       text: panel.text,
     };
-  };
+  }, []);
 
 
   const fetchNextNarration = useCallback(async (scene: Scene): Promise<PanelData> => {
+    setIsPanelLoading(true);
     const response = await fetch(`${backendUrl}/next_narration/`);
     const data = await response.json();
     const narration: Narration = data.response;
@@ -112,6 +113,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     if (!scene.imageUrls) {
       throw new Error("Scene image is not defined");
     }
+    setIsPanelLoading(false);
     return {
       imageUrl: newSceneImageUrls[0],
       characterName: "Narrator",
@@ -124,45 +126,33 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   const handleNext = useCallback(async () => {
     // If it's the start of the scene, fetch the initial narration
     if (messageCount === 0) {
-      const initialNarration = await fetchNextNarration(scene);
-      setActivePanel(initialNarration);
-      const nextPanelData = await fetchNextPanel(scene);
-      setNextPanel(nextPanelData);
+      return;
     } else if (messageCount % 5 === 0 && messageCount !== 0) {
       // If it's time for a narration, display the next narration
       const nextNarration = await fetchNextNarration(scene);
       setActivePanel(nextNarration);
-      const nextPanelData = await fetchNextPanel(scene);
-      setNextPanel(nextPanelData);
+      
       
     }
-    else if (messageCount % 5 === 1 ) {
-      setActivePanel(nextPanel);
-    }
-    else {
-      // If it's time for a panel, display the next panel
-      if (nextPanel) {
-        setActivePanel(nextPanel);
-        const nextPanelData = await fetchNextPanel(scene);
-        setNextPanel(nextPanelData);
-      } else {
-        const nextPanelData = await fetchNextPanel(scene);
-        setActivePanel(nextPanelData);
-        const nextPanelData2 = await fetchNextPanel(scene);
-        setNextPanel(nextPanelData2);
-      }
-
+    else{
+      const nextPanelData = await fetchNextPanel(scene);
+      setActivePanel(nextPanelData);
     }
   
     setMessageCount((count) => count + 1);
-  }, [fetchNextNarration, messageCount, nextPanel, scene]);
+  }, [fetchNextNarration, messageCount, scene, fetchNextPanel]);
 
   useEffect(() => {
-    if (messageCount === 0) {
-      handleNext();
-    }
-  }, [messageCount, handleNext]);
+    const fetchAndSetInitialData = async () => {
+      if (messageCount === 0) {
+        const initialNarration = await fetchNextNarration(scene);
+        setActivePanel(initialNarration);
+        setMessageCount((count) => count + 1);
+      }
+    };
   
+    fetchAndSetInitialData();
+  }, [messageCount, fetchNextNarration, fetchNextPanel, scene]);
   const { music } = useMusicContext();
 
   return (
