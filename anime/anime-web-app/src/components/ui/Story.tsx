@@ -50,10 +50,10 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     const response = await fetch(`${backendUrl}/next_panel/`);
     const data = await response.json();
     const panel: Panel = data.response;
-
+  
     // Find the character in the scene with the same name as the panel's character
     const character = scene.characters.find((c) => c.name === panel.character);
-
+  
     // If the character is found, return the panel data
     if (character) {
       if (!character.imageUrl) {
@@ -66,7 +66,36 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
       };
     }
   
-    throw new Error("Character not found in scene");
+    // If the character is not found, call mapCharacterIntoScene
+    const mapCharacterResponse = await fetch('/api/mapCharacterIntoScene', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ character: panel.character, scene }),
+    });
+    const mapCharacterData = await mapCharacterResponse.json();
+    const characterName = mapCharacterData.name;
+
+    const newChar = scene.characters.find((c) => c.name === panel.character);
+
+    if (!newChar?.imageUrl) {
+
+      // pick a random character if all else fails
+      const randomCharacter = scene.characters[Math.floor(Math.random() * scene.characters.length)];
+      return {
+        imageUrl: randomCharacter.imageUrl!,
+        characterName: randomCharacter.name,
+        text: panel.text,
+      }
+      
+    }
+  
+    return {
+      imageUrl: newChar?.imageUrl!, // You might want to generate an image for this character
+      characterName: characterName,
+      text: panel.text,
+    };
   };
 
   const fetchNextNarration = async (scene: Scene): Promise<PanelData> => {
