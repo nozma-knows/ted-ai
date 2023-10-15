@@ -2,3 +2,4 @@ fastapi
 pyautogen
 uvicorn[standard]
 openai
+marvin
