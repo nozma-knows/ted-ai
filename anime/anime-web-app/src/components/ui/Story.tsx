@@ -148,6 +148,8 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
       setActivePanel(initialNarration);
       const nextPanelData = await fetchNextPanel(scene);
       setNextPanel(nextPanelData);
+      const nextNarration = await fetchNextNarration(scene);
+      setNextNarrationPanel(nextNarration);
     } else if (messageCount % 5 === 0 && messageCount !== 0) {
       // If it's time for a narration, display the next narration
       if (nextNarrationPanel) {
