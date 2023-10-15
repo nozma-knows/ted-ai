@@ -16,7 +16,7 @@ export default function Home() {
   useEffect(() => {
     // Function to generate image for a character
     const generateImage = async (character: Character) => {
-      const response = await fetch('/api/leap/generate-image', {
+      const response = await fetch('/api/leap/generate-character-image', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -28,6 +28,7 @@ export default function Home() {
   
       const data = await response.json();
   
+      console.log(data);
       // Assuming the image URL is returned in the `data.imageUrl` field
       return data.imageUrl;
     };

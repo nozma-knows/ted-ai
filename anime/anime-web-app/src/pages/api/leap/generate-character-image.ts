@@ -65,6 +65,7 @@ export default async function handler(
     };  
 
   try {
+    console.log("generate-image.ts - url: ", url);
     const response = await fetch(url, options);
     const data = await response.json();
     console.log("generate-image.ts - data: ", data);
