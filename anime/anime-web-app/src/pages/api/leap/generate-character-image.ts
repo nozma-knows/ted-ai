@@ -69,7 +69,37 @@ export default async function handler(
     const response = await fetch(url, options);
     const data = await response.json();
     console.log("generate-image.ts - data: ", data);
-    res.status(200).json(data);
+    const { modelId, id: inferenceId } = data;
+
+    // Define the polling URL
+    const pollingUrl = `https://api.tryleap.ai/api/v1/images/models/${modelId}/inferences/${inferenceId}`;
+
+    // Define the polling options
+    const pollingOptions = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        authorization: `Bearer ${process.env.LEAP_API_KEY}`,
+      },
+    };
+
+    // Poll the endpoint until the image is generated
+    let imageResponse;
+    do {
+      imageResponse = await fetch(pollingUrl, pollingOptions);
+      console.log("generate-image.ts - polling leap api: ");
+      const imageData = await imageResponse.json();
+
+      // If the image is generated, break the loop
+      if (imageData.state === 'finished' && imageData.images && imageData.images.length > 0) {
+        // Return the URL of the generated image
+        res.status(200).json({ imageUrl: imageData.images[0].uri });
+        return;
+      }
+
+      // Wait for 1 second before the next poll
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } while (true);
   } catch (error) {
     res.status(500).json({ error });
   }
