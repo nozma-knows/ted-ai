@@ -22,6 +22,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   const [nextNarrationPanel, setNextNarrationPanel] =
     useState<PanelData | null>(null);
 
+  const [isPanelLoading, setIsPanelLoading] = useState<boolean>(false);
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log("Prompt: ", prompt);
@@ -47,6 +48,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
   };
 
   const fetchNextPanel = async (scene: Scene): Promise<PanelData> => {
+    setIsPanelLoading(true);
     const response = await fetch(`${backendUrl}/next_panel/`);
     const data = await response.json();
     const panel: Panel = data.response;
@@ -78,7 +80,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
     const characterName = mapCharacterData.name;
 
     const newChar = scene.characters.find((c) => c.name === panel.character);
-
+    setIsPanelLoading(false);
     if (!newChar?.imageUrl) {
 
       // pick a random character if all else fails
@@ -213,7 +215,7 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Enter a prompt"
             />
-            <Button type="submit" colorScheme="teal">
+           <Button onClick={handleNext} colorScheme="teal" isDisabled={isPanelLoading}>
               Next
             </Button>
           </Flex>
