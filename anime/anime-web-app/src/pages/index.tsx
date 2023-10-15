@@ -83,6 +83,10 @@ export default function Home() {
     }
   }, [scene]); // Depend on scene state
 
+  useEffect(() => {
+    console.log(finalScene)
+  }, [finalScene])
+
   return (
     <Layout>
       <Stack h="full">
