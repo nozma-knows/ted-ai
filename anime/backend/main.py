@@ -27,8 +27,9 @@ class Narration(BaseModel):
 
 def narration_to_string(narration: Narration) -> str:
     if narration is None:
-        return "Narration loading... You can start chatting without it. Use the plot context provided."
-    return narration.text
+        return ""
+
+    return f"The current goal of the scene is to {(last_narration.text)}. The characters conversation will guide them to {last_narration.text}."
 
 
 # Initialize the chat history
@@ -75,11 +76,10 @@ async def send_message():
         "role": "system",
         "content": f"""You are generating panels for a manga! Each manga panel should be short and engaging. The goal of the manga is to tell an interactive story. Please make sure to keep the story consistent and engaging. You should send messages for different characters depending on the current action of the scene. It should unfold in an interesting and engaging way to the user. Make sure that one character doesn't speak more than 4 times in a row. There should be scenematic action unfolding in an engaging, Manga way. There's no such thing as overdramatic in Manga! Be creative and keep all the characters engaged!
 
-There will be a narrator that speaks in between the panels, so you don't need to describe the scene in detail. Just focus on the characters and their actions. The narrator will describe the scene in between the panels. The narrator will send a message every 5 messages. It is up to you to determine how the characters get from "Point A to Point B". Make sure that your panels are engaging and interesting, and that the characters are acting in a way that makes sense for the scene.
-
-The next narration is: {narration_to_string(last_narration)}
-
+{narration_to_string(last_narration)}
+        
 We have generated drawings for the characters, so it is very important that you may not invent new characters, use only the characters listed, with the names written exactly how they are listed.
+The character name must be one of the listed characters for the scene, type exactly as it appears in the scene description.
 """,
     }
 

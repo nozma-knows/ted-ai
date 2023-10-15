@@ -61,6 +61,8 @@ const Story: FC<StoryProps> = ({ video, character, scene }) => {
         text: panel.text,
       };
     }
+
+    
   
     throw new Error("Character not found in scene");
   };
@@ -134,6 +136,8 @@ const handleNext = () => {
       <Flex w="full" h="full" bg="blackAlpha.400" rounded="md">
         Story View
         {activePanel && <img src={activePanel.imageUrl} alt="Active" />}
+        {activePanel && <p>{activePanel.characterName}</p>}
+        {activePanel && <p>{activePanel.text}</p>}
       </Flex>
 
       {showInput ? (
