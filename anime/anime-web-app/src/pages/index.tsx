@@ -55,34 +55,37 @@ const generateSceneImages = async (scene: Scene) => {
   
     // Check if scene is not null
     if (scene) {
-      // Create a copy of the scene
-      const updatedScene = { ...scene };
-  
-      // Generate image for each character without an imageUrl
-      const characterImagePromises = updatedScene.characters.map(async character => {
-        if (!character.imageUrl) {
-          character.imageUrl = await generateCharacterImage(character);
-        }
-        return character;
-      });
-  
-      // Generate image for the scene if it doesn't have an imageUrl
-      const sceneImagePromise = updatedScene.imageUrls && updatedScene.imageUrls.length > 0 ? Promise.resolve(updatedScene.imageUrls) : generateSceneImages(updatedScene);
-  
-      Promise.all([...characterImagePromises, sceneImagePromise])
-    .then(results => {
-      const characters = results.slice(0, -1).flat();
-      const sceneImageUrls = results[results.length - 1];
+    // Create a copy of the scene
+    const updatedScene = { ...scene };
 
-      updatedScene.characters = characters;
-      updatedScene.imageUrls = sceneImageUrls as string[]; // Update imageUrls instead of imageUrl
-
-      // Only update the finalScene state if it has changed
-      if (JSON.stringify(generatingScene) !== JSON.stringify(updatedScene)) {
-        setGeneratingScene(updatedScene);
+    // Generate image for each character without an imageUrl
+    const characterImagePromises = updatedScene.characters.map(character => {
+      if (!character.imageUrl) {
+        return generateCharacterImage(character).then(imageUrl => {
+          character.imageUrl = imageUrl;
+          return character;
+        });
       }
+      return Promise.resolve(character);
     });
-    }
+
+    // Generate image for the scene if it doesn't have an imageUrl
+    const sceneImagePromise = updatedScene.imageUrls && updatedScene.imageUrls.length > 0 ? Promise.resolve(updatedScene.imageUrls) : generateSceneImages(updatedScene);
+
+    Promise.all([...characterImagePromises, sceneImagePromise])
+      .then(results => {
+        const characters = results.slice(0, -1).flat() as Character[];
+        const sceneImageUrls = results[results.length - 1];
+
+        updatedScene.characters = characters;
+        updatedScene.imageUrls = sceneImageUrls as string[]; // Update imageUrls instead of imageUrl
+
+        // Only update the finalScene state if it has changed
+        if (JSON.stringify(generatingScene) !== JSON.stringify(updatedScene)) {
+          setGeneratingScene(updatedScene);
+        }
+      });
+  }
   }, [scene]); // Depend on scene state
 
 

@@ -47,7 +47,7 @@ class Scene(BaseModel):
     characters: List[Character] = Field(
         description="An imaginative description of characters that could be in the scene. We will be generating an imaginary anime using these characters, that will be an interactive story. Please make sure that there are suitable characters for such an imaginary story. Inventing characters that make sense in the scene is OK. Please make sure that the characters are represented by humans or humanoids and avoid anthropomorphized animals or objects."
     )
-    prompts: List[str] = None
+    prompts: List[str] = []
 
 
 class ScenePromptList(BaseModel):

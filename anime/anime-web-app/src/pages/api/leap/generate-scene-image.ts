@@ -2,12 +2,6 @@ import { Character, Scene } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
 import {OpenAI} from "openai";
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-});
-
 
 export default async function handler(
   req: NextApiRequest,
@@ -17,7 +11,9 @@ export default async function handler(
   const url = `https://api.tryleap.ai/api/v1/images/models/${modelId}/inferences`;
   const body = req.body;
 
-  const prompt = body.prompt; // Change this line
+  const prompt = `${body.prompt}  Luminous neon colors, cyberpunk aesthetic, crisp 8K clarity, contemporary anime influence, Studio Ghibli-inspired, emphasize intricate fractals, impactful.`
+
+  
 
   const options = {
     method: "POST",
